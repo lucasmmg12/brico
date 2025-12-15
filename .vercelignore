@@ -1,0 +1,6 @@
+# Archivos a ignorar en Vercel
+*.md
+!README.md
+.git
+.gitignore
+*.sql
