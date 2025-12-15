@@ -7,159 +7,11 @@ function getToday() {
     return today.toISOString().split('T')[0];
 }
 
-// === Datos Mock con Teléfonos ===
-const PEDIDOS_MOCK = [
-    {
-        id: '1',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Juan Pérez',
-        cliente_dni: '12345678',
-        cliente_telefono: '1123456789',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 1 - Almacén Completo',
-        monto: 15000.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
-        estado_pago: 'pendiente',
-        estado_pedido: 'nuevo',
-        fecha_entrega: getToday(),
-        notas_internas: 'Cliente habitual, prioridad alta'
-    },
-    {
-        id: '2',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'María González',
-        cliente_dni: '87654321',
-        cliente_telefono: '1198765432',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 2 - Bebidas y Snacks',
-        monto: 8500.50,
-        comprobante_url: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800',
-        estado_pago: 'pagado',
-        estado_pedido: 'armado',
-        fecha_entrega: getToday(),
-        notas_internas: null
-    },
-    {
-        id: '3',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-        cliente_nombre: 'Carlos Rodríguez',
-        cliente_dni: '11223344',
-        cliente_telefono: '1155443322',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 4 - Carnes Premium',
-        monto: 25000.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1607863680198-23d4b2565df0?w=800',
-        estado_pago: 'pagado',
-        estado_pedido: 'entregado',
-        fecha_entrega: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0],
-        notas_internas: 'Solicita entrega antes de las 18hs'
-    },
-    {
-        id: '4',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Ana Martínez',
-        cliente_dni: '44332211',
-        cliente_telefono: '1144556677',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 3 - Limpieza y Hogar',
-        monto: 6200.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=800',
-        estado_pago: 'pagado',
-        estado_pedido: 'nuevo',
-        fecha_entrega: getToday(),
-        notas_internas: null
-    },
-    {
-        id: '5',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-        cliente_nombre: 'Luis Fernández',
-        cliente_dni: '55667788',
-        cliente_telefono: '1177889900',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 5 - Verduras y Frutas',
-        monto: 12000.00,
-        comprobante_url: null,
-        estado_pago: 'rechazado',
-        estado_pedido: 'no_vino',
-        fecha_entrega: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0],
-        notas_internas: 'Comprobante inválido'
-    },
-    {
-        id: '6',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Patricia Silva',
-        cliente_dni: '99887766',
-        cliente_telefono: '1166778899',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 6 - Desayuno Completo',
-        monto: 4500.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800',
-        estado_pago: 'pagado',
-        estado_pedido: 'entregado',
-        fecha_entrega: getToday(),
-        notas_internas: 'Retira en local'
-    },
-    {
-        id: '7',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Roberto Gómez',
-        cliente_dni: '22334455',
-        cliente_telefono: '1133224455',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 7 - Panadería y Fiambrería',
-        monto: 18500.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800',
-        estado_pago: 'pendiente',
-        estado_pedido: 'nuevo',
-        fecha_entrega: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0],
-        notas_internas: null
-    },
-    {
-        id: '8',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-        cliente_nombre: 'Sofía Ramírez',
-        cliente_dni: '66778899',
-        cliente_telefono: '1155667788',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 8 - Congelados',
-        monto: 7800.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800',
-        estado_pago: 'pagado',
-        estado_pedido: 'armado',
-        fecha_entrega: getToday(),
-        notas_internas: 'Incluir bolsas térmicas'
-    },
-    {
-        id: '9',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-        cliente_nombre: 'Diego Torres',
-        cliente_dni: '33445566',
-        cliente_telefono: '1199887766',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 9 - Bebidas Alcohólicas',
-        monto: 32000.00,
-        comprobante_url: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800',
-        estado_pago: 'pagado',
-        estado_pedido: 'entregado',
-        fecha_entrega: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0],
-        notas_internas: 'Verificar DNI al entregar'
-    },
-    {
-        id: '10',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Valentina López',
-        cliente_dni: '77889900',
-        cliente_telefono: '1122334455',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 10 - Mascotas',
-        monto: 5600.00,
-        comprobante_url: null,
-        estado_pago: 'pendiente',
-        estado_pedido: 'nuevo',
-        fecha_entrega: getToday(),
-        notas_internas: 'Esperando confirmación de pago'
-    }
-];
+// === Inicializar Supabase ===
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+
+console.log('✅ Supabase inicializado:', SUPABASE_CONFIG.url);
 
 const appState = {
     unidadActual: 'Mayorista',
@@ -253,39 +105,68 @@ function initEventListeners() {
     elements.formPedido.addEventListener('submit', guardarPedido);
 }
 
-function cargarPedidos() {
+async function cargarPedidos() {
     mostrarCargando();
 
-    setTimeout(() => {
-        appState.pedidos = PEDIDOS_MOCK.filter(p => p.unidad_negocio === appState.unidadActual);
+    try {
+        const { data, error } = await supabaseClient
+            .from('pedidos')
+            .select('*')
+            .eq('unidad_negocio', appState.unidadActual)
+            .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        appState.pedidos = data || [];
         renderizarPedidos();
         console.log(`✅ Cargados ${appState.pedidos.length} pedidos para ${appState.unidadActual}`);
-    }, 300);
+    } catch (error) {
+        console.error('❌ Error al cargar pedidos:', error);
+        showToast('Error al cargar pedidos', 'error');
+        appState.pedidos = [];
+        renderizarPedidos();
+    }
 }
 
-function actualizarEstadoPago(pedidoId, nuevoEstado) {
-    const pedido = PEDIDOS_MOCK.find(p => p.id === pedidoId);
-    if (pedido) {
-        pedido.estado_pago = nuevoEstado;
+async function actualizarEstadoPago(pedidoId, nuevoEstado) {
+    try {
+        const { error } = await supabaseClient
+            .from('pedidos')
+            .update({ estado_pago: nuevoEstado })
+            .eq('id', pedidoId);
+
+        if (error) throw error;
+
         const pedidoLocal = appState.pedidos.find(p => p.id === pedidoId);
         if (pedidoLocal) {
             pedidoLocal.estado_pago = nuevoEstado;
             renderizarPedidos();
         }
         showToast(`Estado de pago actualizado a: ${nuevoEstado}`, 'success');
+    } catch (error) {
+        console.error('❌ Error al actualizar estado de pago:', error);
+        showToast('Error al actualizar estado de pago', 'error');
     }
 }
 
-function actualizarEstadoPedido(pedidoId, nuevoEstado) {
-    const pedido = PEDIDOS_MOCK.find(p => p.id === pedidoId);
-    if (pedido) {
-        pedido.estado_pedido = nuevoEstado;
+async function actualizarEstadoPedido(pedidoId, nuevoEstado) {
+    try {
+        const { error } = await supabaseClient
+            .from('pedidos')
+            .update({ estado_pedido: nuevoEstado })
+            .eq('id', pedidoId);
+
+        if (error) throw error;
+
         const pedidoLocal = appState.pedidos.find(p => p.id === pedidoId);
         if (pedidoLocal) {
             pedidoLocal.estado_pedido = nuevoEstado;
             renderizarPedidos();
         }
         showToast(`Pedido marcado como: ${nuevoEstado}`, 'success');
+    } catch (error) {
+        console.error('❌ Error al actualizar estado del pedido:', error);
+        showToast('Error al actualizar estado del pedido', 'error');
     }
 }
 
@@ -293,12 +174,10 @@ function marcarPedidoListo(pedidoId) {
     actualizarEstadoPedido(pedidoId, 'armado');
 }
 
-function guardarPedido(e) {
+async function guardarPedido(e) {
     e.preventDefault();
 
     const pedidoData = {
-        id: appState.editandoPedido || String(PEDIDOS_MOCK.length + 1),
-        created_at: new Date().toISOString(),
         cliente_nombre: elements.inputNombre.value.trim(),
         cliente_dni: elements.inputDni.value.trim(),
         cliente_telefono: elements.inputTelefono.value.trim(),
@@ -312,19 +191,32 @@ function guardarPedido(e) {
         notas_internas: elements.inputNotas.value.trim() || null
     };
 
-    if (appState.editandoPedido) {
-        const index = PEDIDOS_MOCK.findIndex(p => p.id === appState.editandoPedido);
-        if (index !== -1) {
-            PEDIDOS_MOCK[index] = { ...PEDIDOS_MOCK[index], ...pedidoData };
-        }
-        showToast('Pedido actualizado correctamente', 'success');
-    } else {
-        PEDIDOS_MOCK.unshift(pedidoData);
-        showToast('Pedido creado correctamente', 'success');
-    }
+    try {
+        if (appState.editandoPedido) {
+            // Actualizar pedido existente
+            const { error } = await supabaseClient
+                .from('pedidos')
+                .update(pedidoData)
+                .eq('id', appState.editandoPedido);
 
-    cerrarModalPedido();
-    cargarPedidos();
+            if (error) throw error;
+            showToast('Pedido actualizado correctamente', 'success');
+        } else {
+            // Crear nuevo pedido
+            const { error } = await supabaseClient
+                .from('pedidos')
+                .insert([pedidoData]);
+
+            if (error) throw error;
+            showToast('Pedido creado correctamente', 'success');
+        }
+
+        cerrarModalPedido();
+        cargarPedidos();
+    } catch (error) {
+        console.error('❌ Error al guardar pedido:', error);
+        showToast('Error al guardar pedido', 'error');
+    }
 }
 
 function cambiarUnidad(unidad) {
