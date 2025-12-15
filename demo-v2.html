@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo - Grupo Brico [DEMO V2]</title>
+    <meta name="description" content="Sistema de gestión de pedidos para Grupo Brico - Mayorista y Express">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-v2.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Librerías para exportación -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        .demo-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 101;
+        }
+
+        .demo-banner-icon {
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Banner de DEMO -->
+    <div class="demo-banner">
+        <span class="demo-banner-icon">🎭</span>
+        MODO DEMO V2 - Con Estadísticas y Exportación PDF/Excel
+    </div>
+
+    <!-- Header Principal -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo-section">
+                <div class="logo">BRICO</div>
+                <div class="logo-subtitle">Dashboard Administrativo</div>
+            </div>
+
+            <!-- Tabs de Unidad de Negocio -->
+            <nav class="tabs">
+                <button class="tab active" data-unidad="Mayorista">
+                    <span class="tab-icon">📦</span>
+                    Mayorista
+                </button>
+                <button class="tab" data-unidad="Express">
+                    <span class="tab-icon">⚡</span>
+                    Express
+                </button>
+            </nav>
+
+            <!-- Estadísticas Rápidas -->
+            <div class="stats-quick">
+                <div class="stat-item">
+                    <span class="stat-label">Total Pedidos</span>
+                    <span class="stat-value" id="stat-total">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Monto Total</span>
+                    <span class="stat-value" id="stat-monto">$0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="main-container">
+        <!-- Panel de Estadísticas -->
+        <section class="stats-panel">
+            <h2 class="stats-title">📊 Estadísticas - <span id="stats-unidad">Mayorista</span></h2>
+
+            <div class="stats-grid">
+                <!-- Pedidos Tomados -->
+                <div class="stat-card">
+                    <div class="stat-card-icon">📝</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Pedidos Tomados</div>
+                        <div class="stat-card-value" id="stat-pedidos-tomados">0</div>
+                    </div>
+                </div>
+
+                <!-- Pedidos Entregados -->
+                <div class="stat-card">
+                    <div class="stat-card-icon">✅</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Pedidos Entregados</div>
+                        <div class="stat-card-value" id="stat-pedidos-entregados">0</div>
+                    </div>
+                </div>
+
+                <!-- Importe Facturado -->
+                <div class="stat-card stat-card-highlight">
+                    <div class="stat-card-icon">💰</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Importe Facturado</div>
+                        <div class="stat-card-value" id="stat-importe-facturado">$0</div>
+                    </div>
+                </div>
+
+                <!-- Pedidos de Hoy -->
+                <div class="stat-card stat-card-today">
+                    <div class="stat-card-icon">🆕</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Pedidos de Hoy</div>
+                        <div class="stat-card-value" id="stat-pedidos-hoy">0</div>
+                    </div>
+                </div>
+
+                <!-- Entregas de Hoy -->
+                <div class="stat-card stat-card-delivery">
+                    <div class="stat-card-icon">🚚</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Entregas de Hoy</div>
+                        <div class="stat-card-value" id="stat-entregas-hoy">0</div>
+                    </div>
+                </div>
+
+                <!-- Pendientes de Pago -->
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-card-icon">⚠️</div>
+                    <div class="stat-card-content">
+                        <div class="stat-card-label">Pendientes de Pago</div>
+                        <div class="stat-card-value" id="stat-pendientes-pago">0</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filtros y Controles -->
+        <section class="controls-section">
+            <div class="controls-left">
+                <button class="btn-secondary" id="btn-refresh">
+                    <span class="btn-icon">🔄</span>
+                    Actualizar
+                </button>
+
+                <select class="filter-select" id="filter-estado-pago">
+                    <option value="">Todos los pagos</option>
+                    <option value="pendiente">Pendiente</option>
+                    <option value="pagado">Pagado</option>
+                    <option value="rechazado">Rechazado</option>
+                </select>
+
+                <select class="filter-select" id="filter-estado-pedido">
+                    <option value="">Todos los pedidos</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="armado">Armado</option>
+                    <option value="entregado">Entregado</option>
+                    <option value="no_vino">No vino</option>
+                </select>
+
+                <select class="filter-select" id="filter-fecha">
+                    <option value="">Todas las fechas</option>
+                    <option value="hoy">Pedidos de Hoy</option>
+                    <option value="entrega-hoy">Entregas de Hoy</option>
+                </select>
+            </div>
+
+            <div class="controls-right">
+                <button class="btn-export btn-excel" id="btn-export-excel">
+                    <span class="btn-icon">📊</span>
+                    Excel
+                </button>
+                <button class="btn-export btn-pdf" id="btn-export-pdf">
+                    <span class="btn-icon">📄</span>
+                    PDF
+                </button>
+                <button class="btn-primary" id="btn-nuevo-pedido">
+                    <span class="btn-icon">➕</span>
+                    Nuevo Pedido
+                </button>
+            </div>
+        </section>
+
+        <!-- Grid de Pedidos -->
+        <section class="pedidos-grid" id="pedidos-grid">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Cargando pedidos...</p>
+            </div>
+        </section>
+
+        <!-- Estado Vacío -->
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <div class="empty-icon">📋</div>
+            <h2>No hay pedidos</h2>
+            <p>No se encontraron pedidos para esta unidad de negocio.</p>
+            <button class="btn-primary" id="btn-nuevo-pedido-empty">
+                <span class="btn-icon">➕</span>
+                Crear Primer Pedido
+            </button>
+        </div>
+    </main>
+
+    <!-- Modal para Ver Comprobante -->
+    <div class="modal" id="modal-comprobante">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-image">
+            <button class="modal-close" id="close-comprobante">✕</button>
+            <h2 class="modal-title">Comprobante de Pago</h2>
+            <div class="modal-body">
+                <img id="comprobante-image" src="" alt="Comprobante" class="comprobante-img">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nuevo/Editar Pedido -->
+    <div class="modal" id="modal-pedido">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="close-pedido">✕</button>
+            <h2 class="modal-title" id="modal-pedido-title">Nuevo Pedido</h2>
+            <div class="modal-body">
+                <form id="form-pedido" class="form-pedido">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-nombre">Nombre y Apellido *</label>
+                            <input type="text" id="input-nombre" required placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-dni">DNI *</label>
+                            <input type="text" id="input-dni" required placeholder="Ej: 12345678">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-unidad">Unidad de Negocio *</label>
+                            <select id="input-unidad" required>
+                                <option value="Mayorista">Mayorista</option>
+                                <option value="Express">Express</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-promo">Promo Seleccionada *</label>
+                            <input type="text" id="input-promo" required placeholder="Ej: Promo 4 - Carnes">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-monto">Monto *</label>
+                            <input type="number" id="input-monto" required step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-fecha-entrega">Fecha de Entrega</label>
+                            <input type="date" id="input-fecha-entrega">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-comprobante">Comprobante (URL)</label>
+                        <input type="url" id="input-comprobante" placeholder="https://...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-notas">Notas Internas</label>
+                        <textarea id="input-notas" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="btn-cancelar">Cancelar</button>
+                        <button type="submit" class="btn-primary">
+                            <span class="btn-icon">💾</span>
+                            Guardar Pedido
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="app-demo-v2.js"></script>
+</body>
+
+</html>

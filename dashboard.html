@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Grupo Brico</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-v3.css">
+    <link rel="stylesheet" href="styles-modern.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Librerías para exportación -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+
+<body class="modern-body">
+    <!-- Header Principal -->
+    <header class="header-modern">
+        <div class="header-container">
+            <div class="logo-section-modern">
+                <div class="logo-modern">Brico</div>
+                <div class="logo-subtitle-modern">Dashboard de pedidos</div>
+            </div>
+
+            <!-- Tabs de Unidad de Negocio -->
+            <nav class="tabs-modern">
+                <button class="tab-modern active" data-unidad="Mayorista">
+                    <span class="tab-icon">📦</span>
+                    Mayorista
+                </button>
+                <button class="tab-modern" data-unidad="Express">
+                    <span class="tab-icon">⚡</span>
+                    Express
+                </button>
+            </nav>
+
+            <!-- Navegación -->
+            <div class="header-nav-modern">
+                <a href="estadisticas.html" class="btn-nav-modern">
+                    <span class="btn-icon">📊</span>
+                    Estadísticas
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="main-container-modern">
+        <!-- Filtros y Controles -->
+        <section class="controls-section-modern">
+            <div class="controls-left">
+                <button class="btn-secondary-modern" id="btn-refresh">
+                    <span class="btn-icon">🔄</span>
+                    Actualizar
+                </button>
+
+                <select class="filter-select-modern" id="filter-estado-pago">
+                    <option value="">Todos los pagos</option>
+                    <option value="pendiente">⏳ Pendiente</option>
+                    <option value="pagado">✅ Pagado</option>
+                    <option value="rechazado">❌ Rechazado</option>
+                </select>
+
+                <select class="filter-select-modern" id="filter-estado-pedido">
+                    <option value="">Todos los pedidos</option>
+                    <option value="nuevo">Nuevo</option>
+                    <option value="armado">Armado</option>
+                    <option value="entregado">Entregado</option>
+                    <option value="no_vino">No vino</option>
+                </select>
+
+                <select class="filter-select-modern" id="filter-fecha">
+                    <option value="">Todas las fechas</option>
+                    <option value="hoy">🆕 Pedidos de hoy</option>
+                    <option value="entrega-hoy">🚚 Entregas de hoy</option>
+                </select>
+            </div>
+
+            <div class="controls-right">
+                <button class="btn-export-modern btn-excel-modern" id="btn-export-excel">
+                    <span class="btn-icon">📊</span>
+                    Excel
+                </button>
+                <button class="btn-export-modern btn-pdf-modern" id="btn-export-pdf">
+                    <span class="btn-icon">📄</span>
+                    PDF
+                </button>
+                <button class="btn-primary-modern" id="btn-nuevo-pedido">
+                    <span class="btn-icon">➕</span>
+                    Nuevo pedido
+                </button>
+            </div>
+        </section>
+
+        <!-- Tabla de Pedidos -->
+        <section class="table-container-modern" id="table-container">
+            <table class="pedidos-table-modern" id="pedidos-table">
+                <thead>
+                    <tr>
+                        <th class="col-fecha">Fecha</th>
+                        <th class="col-cliente">Cliente</th>
+                        <th class="col-telefono">Teléfono</th>
+                        <th class="col-promo">Promo</th>
+                        <th class="col-monto">Monto</th>
+                        <th class="col-pago">Estado pago</th>
+                        <th class="col-estado">Estado pedido</th>
+                        <th class="col-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="pedidos-tbody">
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 2rem;">
+                            <div class="spinner"></div>
+                            <p>Cargando pedidos...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Estado Vacío -->
+        <div class="empty-state-modern" id="empty-state" style="display: none;">
+            <div class="empty-icon">📋</div>
+            <h2>No hay pedidos</h2>
+            <p>No se encontraron pedidos para esta unidad de negocio.</p>
+            <button class="btn-primary-modern" id="btn-nuevo-pedido-empty">
+                <span class="btn-icon">➕</span>
+                Crear primer pedido
+            </button>
+        </div>
+
+        <!-- Footer Grupo Brico -->
+        <footer class="footer-brico-modern">
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <!-- Columna Izquierda: Info de Grow Labs -->
+                    <div class="footer-column">
+                        <div class="footer-brand">
+                            <div class="footer-logo">
+                                <img src="public/logogrow.png" alt="Grow Labs" class="footer-logo-img">
+                            </div>
+                            <div class="footer-brand-text">
+                                <h3 class="footer-title">Grow Labs</h3>
+                                <p class="footer-subtitle">Donde tus ideas crecen</p>
+                            </div>
+                        </div>
+                        <p class="footer-description">
+                            Startup tecnológica especializada en inteligencia artificial y automatización de procesos.
+                            Transformamos ideas en soluciones innovadoras para gestión documental y trazabilidad
+                            financiera.
+                        </p>
+                        <div class="footer-social-buttons">
+                            <a href="https://www.instagram.com/growsanjuan/" target="_blank" rel="noopener noreferrer"
+                                class="footer-btn footer-btn-instagram">
+                                <svg class="footer-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                </svg>
+                                <span class="footer-btn-text">Instagram</span>
+                            </a>
+                            <a href="https://api.whatsapp.com/send/?phone=5492643229503&text&type=phone_number&app_absent=0"
+                                target="_blank" rel="noopener noreferrer" class="footer-btn footer-btn-whatsapp">
+                                <svg class="footer-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                </svg>
+                                <span class="footer-btn-text">WhatsApp</span>
+                            </a>
+                        </div>
+                        <div class="footer-social-buttons">
+                            <a href="https://www.growsanjuan.com" target="_blank" rel="noopener noreferrer"
+                                class="footer-btn footer-btn-web">
+                                <svg class="footer-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                </svg>
+                                <span class="footer-btn-text">Sitio web</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/lucas-marinero-182521308/" target="_blank"
+                                rel="noopener noreferrer" class="footer-btn footer-btn-linkedin">
+                                <svg class="footer-icon" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                </svg>
+                                <span class="footer-btn-text">LinkedIn</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Cliente Exclusivo -->
+                    <div class="footer-column">
+                        <div class="footer-client-card">
+                            <h4 class="footer-client-title">
+                                <svg class="footer-client-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Sistema de gestión
+                            </h4>
+                            <div class="footer-client-content">
+                                <p class="footer-client-description">
+                                    Esta plataforma fue desarrollada para optimizar la gestión de pedidos y entregas en:
+                                </p>
+                                <p class="footer-client-name">Grupo Brico</p>
+                                <p class="footer-client-location">San Juan, Argentina</p>
+                                <div class="footer-client-details">
+                                    <p class="footer-client-tech">
+                                        Sistema de gestión de pedidos con dashboard administrativo, exportación de datos
+                                        y seguimiento en tiempo real.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="footer-copyright">
+                    <p class="footer-copyright-text">
+                        © 2025 Grow Labs. Todos los derechos reservados. | Powered by IA & Automatización financiera
+                    </p>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <!-- Modal para Ver Comprobante -->
+    <div class="modal" id="modal-comprobante">
+        <div class="modal-overlay"></div>
+        <div class="modal-content modal-image">
+            <button class="modal-close" id="close-comprobante">✕</button>
+            <h2 class="modal-title">Comprobante de pago</h2>
+            <div class="modal-body">
+                <img id="comprobante-image" src="" alt="Comprobante" class="comprobante-img">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nuevo/Editar Pedido -->
+    <div class="modal" id="modal-pedido">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="close-pedido">✕</button>
+            <h2 class="modal-title" id="modal-pedido-title">Nuevo pedido</h2>
+            <div class="modal-body">
+                <form id="form-pedido" class="form-pedido">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-nombre">Nombre y apellido *</label>
+                            <input type="text" id="input-nombre" required placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-dni">DNI *</label>
+                            <input type="text" id="input-dni" required placeholder="Ej: 12345678">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-telefono">Teléfono (WhatsApp) *</label>
+                            <input type="tel" id="input-telefono" required placeholder="Ej: 1123456789">
+                            <small>Sin 0, sin 15. Ej: 1123456789</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="input-unidad">Unidad de negocio *</label>
+                            <select id="input-unidad" required>
+                                <option value="Mayorista">Mayorista</option>
+                                <option value="Express">Express</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-promo">Promo seleccionada *</label>
+                            <input type="text" id="input-promo" required placeholder="Ej: Promo 4 - Carnes">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-monto">Monto *</label>
+                            <input type="number" id="input-monto" required step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="input-fecha-entrega">Fecha de entrega</label>
+                            <input type="date" id="input-fecha-entrega">
+                        </div>
+                        <div class="form-group">
+                            <label for="input-comprobante">Comprobante (URL)</label>
+                            <input type="url" id="input-comprobante" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input-notas">Notas internas</label>
+                        <textarea id="input-notas" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary-modern" id="btn-cancelar">Cancelar</button>
+                        <button type="submit" class="btn-primary-modern">
+                            <span class="btn-icon">💾</span>
+                            Guardar pedido
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="app-v3.js"></script>
+</body>
+
+</html>

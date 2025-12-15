@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - Grupo Brico</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-v3.css">
+    <link rel="stylesheet" href="styles-modern.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+
+<body class="modern-body">
+    <!-- Header Principal -->
+    <header class="header-modern">
+        <div class="header-container">
+            <div class="logo-section-modern">
+                <div class="logo-modern">Brico</div>
+                <div class="logo-subtitle-modern">Estadísticas</div>
+            </div>
+
+            <!-- Tabs de Unidad de Negocio -->
+            <nav class="tabs-modern">
+                <button class="tab-modern active" data-unidad="Mayorista">
+                    <span class="tab-icon">📦</span>
+                    Mayorista
+                </button>
+                <button class="tab-modern" data-unidad="Express">
+                    <span class="tab-icon">⚡</span>
+                    Express
+                </button>
+            </nav>
+
+            <!-- Navegación -->
+            <div class="header-nav-modern">
+                <a href="dashboard.html" class="btn-nav-modern">
+                    <span class="btn-icon">📋</span>
+                    Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="main-container-modern">
+        <!-- Título de Estadísticas -->
+        <div class="stats-header-modern">
+            <h1 class="stats-title-modern">
+                <span class="stats-icon">📊</span>
+                Estadísticas - <span id="stats-unidad" class="stats-unidad-highlight">Mayorista</span>
+            </h1>
+            <p class="stats-subtitle-modern">Análisis de rendimiento y métricas clave</p>
+        </div>
+
+        <!-- Tarjetas de Métricas Principales -->
+        <div class="metrics-grid-modern">
+            <div class="metric-card-modern metric-primary">
+                <div class="metric-icon">📦</div>
+                <div class="metric-content">
+                    <div class="metric-label">Pedidos tomados</div>
+                    <div class="metric-value" id="stat-pedidos-tomados">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-success">
+                <div class="metric-icon">✅</div>
+                <div class="metric-content">
+                    <div class="metric-label">Pedidos entregados</div>
+                    <div class="metric-value" id="stat-pedidos-entregados">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-money">
+                <div class="metric-icon">💰</div>
+                <div class="metric-content">
+                    <div class="metric-label">Importe facturado</div>
+                    <div class="metric-value metric-value-money" id="stat-importe-facturado">$0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-today">
+                <div class="metric-icon">🆕</div>
+                <div class="metric-content">
+                    <div class="metric-label">Pedidos de hoy</div>
+                    <div class="metric-value" id="stat-pedidos-hoy">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-delivery">
+                <div class="metric-icon">🚚</div>
+                <div class="metric-content">
+                    <div class="metric-label">Entregas de hoy</div>
+                    <div class="metric-value" id="stat-entregas-hoy">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-warning">
+                <div class="metric-icon">⏳</div>
+                <div class="metric-content">
+                    <div class="metric-label">Pendientes de pago</div>
+                    <div class="metric-value" id="stat-pendientes-pago">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="charts-grid-modern">
+            <!-- Gráfico de Pedidos por Estado -->
+            <div class="chart-card-modern">
+                <div class="chart-header">
+                    <h3 class="chart-title">Pedidos por estado</h3>
+                    <p class="chart-subtitle">Distribución actual</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-pedidos-estado"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Ventas por Día -->
+            <div class="chart-card-modern">
+                <div class="chart-header">
+                    <h3 class="chart-title">Ventas últimos 7 días</h3>
+                    <p class="chart-subtitle">Tendencia semanal</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-ventas-semana"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Estado de Pago -->
+            <div class="chart-card-modern">
+                <div class="chart-header">
+                    <h3 class="chart-title">Estado de pagos</h3>
+                    <p class="chart-subtitle">Distribución de pagos</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-estado-pago"></canvas>
+                </div>
+            </div>
+
+            <!-- Gráfico de Top Promociones -->
+            <div class="chart-card-modern">
+                <div class="chart-header">
+                    <h3 class="chart-title">Promociones más vendidas</h3>
+                    <p class="chart-subtitle">Top 5 del mes</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-top-promos"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scripts -->
+    <script src="estadisticas-charts.js"></script>
+</body>
+
+</html>

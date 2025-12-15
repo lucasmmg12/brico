@@ -1,0 +1,588 @@
+/* ============================================
+   ESTILOS MODERNOS - Supermercado Premium
+   ============================================ */
+
+* {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.modern-body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    min-height: 100vh;
+}
+
+/* === HEADER MODERNO === */
+.header-modern {
+    background: linear-gradient(135deg, #FF6700 0%, #E65A00 100%);
+    box-shadow: 0 4px 20px rgba(255, 103, 0, 0.3);
+    padding: 1.25rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.logo-section-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.logo-modern {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.5px;
+    text-transform: capitalize;
+}
+
+.logo-subtitle-modern {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+/* === TABS MODERNOS === */
+.tabs-modern {
+    display: flex;
+    gap: 0.75rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+}
+
+.tab-modern {
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: capitalize;
+}
+
+.tab-modern:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.tab-modern.active {
+    background: white;
+    color: #FF6700;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tab-icon {
+    font-size: 1.125rem;
+}
+
+/* === NAVEGACI√ìN HEADER === */
+.header-nav-modern {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-nav-modern {
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+}
+
+.btn-nav-modern:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* === CONTENEDOR PRINCIPAL === */
+.main-container-modern {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* === CONTROLES MODERNOS === */
+.controls-section-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+    background: white;
+    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.controls-left,
+.controls-right {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* === BOTONES MODERNOS === */
+.btn-primary-modern {
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #FF6700 0%, #E65A00 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(255, 103, 0, 0.3);
+    text-transform: capitalize;
+}
+
+.btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 103, 0, 0.4);
+}
+
+.btn-secondary-modern {
+    padding: 0.75rem 1.5rem;
+    background: #f5f7fa;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: capitalize;
+}
+
+.btn-secondary-modern:hover {
+    background: #e2e8f0;
+    border-color: #cbd5e0;
+}
+
+.btn-export-modern {
+    padding: 0.75rem 1.25rem;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: capitalize;
+}
+
+.btn-excel-modern {
+    background: linear-gradient(135deg, #28B463 0%, #229954 100%);
+    box-shadow: 0 4px 12px rgba(40, 180, 99, 0.3);
+}
+
+.btn-excel-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(40, 180, 99, 0.4);
+}
+
+.btn-pdf-modern {
+    background: linear-gradient(135deg, #E74C3C 0%, #C0392B 100%);
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.btn-pdf-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(231, 76, 60, 0.4);
+}
+
+/* === SELECTORES MODERNOS === */
+.filter-select-modern {
+    padding: 0.75rem 1rem;
+    background: white;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    text-transform: capitalize;
+}
+
+.filter-select-modern:hover {
+    border-color: #FF6700;
+}
+
+.filter-select-modern:focus {
+    outline: none;
+    border-color: #FF6700;
+    box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.1);
+}
+
+/* === TABLA MODERNA === */
+.table-container-modern {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.pedidos-table-modern {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.pedidos-table-modern thead {
+    background: linear-gradient(135deg, #FF6700 0%, #E65A00 100%);
+    color: white;
+}
+
+.pedidos-table-modern thead th {
+    padding: 1rem 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.8125rem;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    text-transform: capitalize;
+}
+
+.pedidos-table-modern tbody tr {
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+}
+
+.pedidos-table-modern tbody tr:hover {
+    background: #fef5f1;
+}
+
+.pedidos-table-modern tbody tr:last-child {
+    border-bottom: none;
+}
+
+.pedidos-table-modern tbody td {
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+
+/* === ESTADO VAC√çO MODERNO === */
+.empty-state-modern {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.empty-state-modern .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.empty-state-modern h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+
+.empty-state-modern p {
+    font-size: 1rem;
+    color: #718096;
+    margin-bottom: 2rem;
+    text-transform: capitalize;
+}
+
+/* === FOOTER MODERNO === */
+.footer-brico-modern {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-top: 4rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.footer-brico-modern .footer-title {
+    text-transform: capitalize;
+}
+
+.footer-brico-modern .footer-subtitle {
+    text-transform: capitalize;
+}
+
+.footer-brico-modern .footer-client-title {
+    text-transform: capitalize;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 1024px) {
+    .header-container {
+        flex-wrap: wrap;
+    }
+
+    .tabs-modern {
+        order: 3;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-container-modern {
+        padding: 1rem;
+    }
+
+    .controls-section-modern {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .controls-left,
+    .controls-right {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .filter-select-modern,
+    .btn-secondary-modern,
+    .btn-primary-modern,
+    .btn-export-modern {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .table-container-modern {
+        overflow-x: auto;
+    }
+
+    .pedidos-table-modern {
+        min-width: 1000px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-modern {
+        font-size: 1.5rem;
+    }
+
+    .header-container {
+        padding: 0 1rem;
+    }
+}
+
+/* === ESTADÕSTICAS MODERNAS === */
+.stats-header-modern {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.stats-title-modern {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-transform: capitalize;
+}
+
+.stats-icon {
+    font-size: 3rem;
+}
+
+.stats-unidad-highlight {
+    color: #FF6700;
+}
+
+.stats-subtitle-modern {
+    font-size: 1.125rem;
+    color: #718096;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+/* === GRID DE M…TRICAS === */
+.metrics-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.metric-card-modern {
+    background: white;
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+.metric-card-modern:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.metric-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.metric-content {
+    flex: 1;
+}
+
+.metric-label {
+    font-size: 0.875rem;
+    color: #718096;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: capitalize;
+}
+
+.metric-value {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #2d3748;
+    line-height: 1;
+}
+
+.metric-value-money {
+    color: #FF6700;
+}
+
+.metric-primary {
+    border-left-color: #FF6700;
+}
+
+.metric-success {
+    border-left-color: #28B463;
+}
+
+.metric-money {
+    border-left-color: #F39C12;
+    background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+}
+
+.metric-today {
+    border-left-color: #3498DB;
+}
+
+.metric-delivery {
+    border-left-color: #28B463;
+}
+
+.metric-warning {
+    border-left-color: #E67E22;
+}
+
+/* === GRID DE GR¡FICOS === */
+.charts-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 1.5rem;
+}
+
+.chart-card-modern {
+    background: white;
+    border-radius: 16px;
+    padding: 1.75rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.chart-header {
+    margin-bottom: 1.5rem;
+}
+
+.chart-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.25rem;
+    text-transform: capitalize;
+}
+
+.chart-subtitle {
+    font-size: 0.875rem;
+    color: #718096;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+@media (max-width: 768px) {
+    .stats-title-modern {
+        font-size: 1.75rem;
+        flex-direction: column;
+    }
+    
+    .metrics-grid-modern {
+        grid-template-columns: 1fr;
+    }
+    
+    .charts-grid-modern {
+        grid-template-columns: 1fr;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+    }
+}
+
+
+/* === LOGO EN FOOTER === */
+.footer-logo-img {
+    height: 3.5rem;
+    width: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    background: white;
+    padding: 0.5rem;
+}
