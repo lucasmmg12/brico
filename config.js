@@ -7,10 +7,10 @@
 
 const SUPABASE_CONFIG = {
     // URL de tu proyecto Supabase
-    url: 'TU_SUPABASE_URL_AQUI',
+    url: 'https://fhfacchqwvzpkmxlleri.supabase.co',
     
     // Anon/Public Key (es segura para usar en el frontend)
-    anonKey: 'TU_SUPABASE_ANON_KEY_AQUI',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZmFjY2hxd3Z6cGtteGxsZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4Mjk4MjEsImV4cCI6MjA4MTQwNTgyMX0.6gDuw58ShxvJ39f_t7Wl9PWAZWCrwHR-ogPs3MTURxU',
     
     // Nombre del bucket de Storage para comprobantes
     storageBucket: 'comprobantes'
