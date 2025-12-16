@@ -35,6 +35,7 @@ https://fhfacchqwvzpkmxlleri.supabase.co/functions/v1/crear-pedido-whatsapp
 ```json
 {
   "Content-Type": "application/json",
+  "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZmFjY2hxd3Z6cGtteGxsZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzMTQ5MjQsImV4cCI6MjA0OTg5MDkyNH0.hNMOdCGTyuPbNOILgxsxkZWPtYPNLjlPXaOPLGcZQzU",
   "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZoZmFjY2hxd3Z6cGtteGxsZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQzMTQ5MjQsImV4cCI6MjA0OTg5MDkyNH0.hNMOdCGTyuPbNOILgxsxkZWPtYPNLjlPXaOPLGcZQzU"
 }
 ```
