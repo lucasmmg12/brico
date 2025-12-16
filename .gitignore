@@ -16,3 +16,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 .env*.local
+
+# Supabase functions (contienen API keys sensibles)
+supabase/functions/
