@@ -1,5 +1,5 @@
 // ============================================
-// SELECCIÓN DE TURNO - CLIENTE
+// SELECCIÓN DE TURNO V2 - MEJORADO
 // ============================================
 
 const { createClient } = supabase;
@@ -15,35 +15,40 @@ const CONFIG = {
     HORA_APERTURA: 9,
     HORA_CIERRE: 23,
     INTERVALO_MINUTOS: 10,
-    DIAS_MOSTRAR: 7
+    DIAS_MOSTRAR: 7,
+    TURNOS_POR_PAGINA: 12 // Mostrar solo 12 turnos a la vez
 };
 
 const appState = {
     nombre: '',
     telefono: '',
-    unidadNegocio: 'Mayorista', // Se puede obtener de URL params
+    unidadNegocio: 'Mayorista',
+    diaSeleccionado: null,
     turnoSeleccionado: null,
-    horaMinima: null
+    horaMinima: null,
+    diasDisponibles: []
 };
 
 const elements = {
     stepForm: document.getElementById('step-form'),
-    stepCalendar: document.getElementById('step-calendar'),
+    stepDia: document.getElementById('step-dia'),
+    stepHora: document.getElementById('step-hora'),
     stepSuccess: document.getElementById('step-success'),
     formDatos: document.getElementById('form-datos'),
     nombre: document.getElementById('nombre'),
     telefono: document.getElementById('telefono'),
-    calendarContainer: document.getElementById('calendar-container'),
+    diasContainer: document.getElementById('dias-container'),
+    horasContainer: document.getElementById('horas-container'),
+    diaSeleccionadoText: document.getElementById('dia-seleccionado-text'),
     btnConfirmar: document.getElementById('btn-confirmar'),
+    btnVolverDias: document.getElementById('btn-volver-dias'),
     turnoConfirmado: document.getElementById('turno-confirmado'),
     errorMessage: document.getElementById('error-message')
 };
 
-// Inicialización
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📅 Selección de turno inicializada');
+    console.log('📅 Selección de turno V2 inicializada');
 
-    // Obtener unidad de negocio de URL params
     const params = new URLSearchParams(window.location.search);
     appState.unidadNegocio = params.get('unidad') || 'Mayorista';
 
@@ -54,6 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
 function initEventListeners() {
     elements.formDatos.addEventListener('submit', handleFormSubmit);
     elements.btnConfirmar.addEventListener('click', confirmarTurno);
+    if (elements.btnVolverDias) {
+        elements.btnVolverDias.addEventListener('click', volverADias);
+    }
 }
 
 function handleFormSubmit(e) {
@@ -62,25 +70,21 @@ function handleFormSubmit(e) {
     appState.nombre = elements.nombre.value.trim();
     let telefono = elements.telefono.value.trim();
 
-    // Limpiar el teléfono (quitar espacios, guiones, etc)
     telefono = telefono.replace(/\D/g, '');
 
-    // Validar que tenga exactamente 10 dígitos
     if (telefono.length !== 10) {
         showError('El teléfono debe tener 10 dígitos (código de área + número, sin 0 ni 15)');
         return;
     }
 
-    // Normalizar: agregar prefijo 549 para WhatsApp
     appState.telefono = '549' + telefono;
 
     console.log(`📱 Teléfono normalizado: ${telefono} → ${appState.telefono}`);
 
-    // Pasar al calendario
     elements.stepForm.classList.add('hidden');
-    elements.stepCalendar.classList.remove('hidden');
+    elements.stepDia.classList.remove('hidden');
 
-    cargarTurnos();
+    cargarDias();
 }
 
 function calcularHoraMinima() {
@@ -89,9 +93,8 @@ function calcularHoraMinima() {
     appState.horaMinima = horaMinima;
 }
 
-async function cargarTurnos() {
+async function cargarDias() {
     try {
-        // Generar fechas (próximos 7 días)
         const fechas = [];
         for (let i = 0; i < CONFIG.DIAS_MOSTRAR; i++) {
             const fecha = new Date();
@@ -99,7 +102,6 @@ async function cargarTurnos() {
             fechas.push(fecha.toISOString().split('T')[0]);
         }
 
-        // Cargar pedidos existentes
         const { data: pedidos, error } = await supabaseClient
             .from('pedidos')
             .select('turno_fecha, turno_hora')
@@ -109,66 +111,98 @@ async function cargarTurnos() {
 
         if (error) throw error;
 
-        // Organizar pedidos por fecha y hora
         const turnosOcupados = new Set();
         (pedidos || []).forEach(p => {
             turnosOcupados.add(`${p.turno_fecha}_${p.turno_hora}`);
         });
 
-        // Renderizar calendario
-        renderizarCalendario(fechas, turnosOcupados);
+        appState.diasDisponibles = fechas.map(fechaStr => {
+            const turnos = generarTurnosDia(fechaStr, turnosOcupados);
+            return {
+                fecha: fechaStr,
+                turnosDisponibles: turnos.length
+            };
+        }).filter(dia => dia.turnosDisponibles > 0);
+
+        renderizarDias();
 
     } catch (error) {
-        console.error('Error al cargar turnos:', error);
-        showError('Error al cargar turnos disponibles');
+        console.error('Error al cargar días:', error);
+        showError('Error al cargar días disponibles');
     }
 }
 
-function renderizarCalendario(fechas, turnosOcupados) {
-    const html = fechas.map(fechaStr => {
-        const fecha = new Date(fechaStr + 'T00:00:00');
-        const esHoy = fechaStr === new Date().toISOString().split('T')[0];
+function renderizarDias() {
+    if (appState.diasDisponibles.length === 0) {
+        elements.diasContainer.innerHTML = '<p class="error">No hay turnos disponibles en los próximos días</p>';
+        return;
+    }
 
-        // Generar turnos del día
-        const turnos = generarTurnosDia(fechaStr, turnosOcupados);
-
-        if (turnos.length === 0) {
-            return ''; // No mostrar días sin turnos
-        }
+    elements.diasContainer.innerHTML = appState.diasDisponibles.map(dia => {
+        const fecha = new Date(dia.fecha + 'T00:00:00');
+        const esHoy = dia.fecha === new Date().toISOString().split('T')[0];
 
         return `
-            <div class="dia-card">
-                <div class="dia-header">
-                    <div class="dia-fecha">
-                        ${fecha.toLocaleDateString('es-AR', { weekday: 'short', day: 'numeric', month: 'short' })}
-                    </div>
-                    ${esHoy ? '<div class="dia-badge">Hoy</div>' : ''}
-                </div>
-                <div class="turnos-disponibles">
-                    ${turnos.map(turno => `
-                        <button class="turno-btn" 
-                                data-fecha="${turno.fecha}" 
-                                data-hora="${turno.hora}"
-                                ${!turno.disponible ? 'disabled' : ''}>
-                            ${turno.horaDisplay}
-                        </button>
-                    `).join('')}
-                </div>
-            </div>
+            <button class="dia-btn" data-fecha="${dia.fecha}">
+                <div class="dia-nombre">${fecha.toLocaleDateString('es-AR', { weekday: 'long' })}</div>
+                <div class="dia-numero">${fecha.getDate()}</div>
+                <div class="dia-mes">${fecha.toLocaleDateString('es-AR', { month: 'short' })}</div>
+                ${esHoy ? '<div class="dia-badge-small">Hoy</div>' : ''}
+                <div class="dia-disponibles">${dia.turnosDisponibles} turnos</div>
+            </button>
         `;
-    }).filter(html => html).join('');
+    }).join('');
 
-    elements.calendarContainer.innerHTML = html || '<p class="error">No hay turnos disponibles en los próximos días</p>';
-
-    // Agregar event listeners
-    document.querySelectorAll('.turno-btn:not([disabled])').forEach(btn => {
-        btn.addEventListener('click', () => seleccionarTurno(btn));
+    document.querySelectorAll('.dia-btn').forEach(btn => {
+        btn.addEventListener('click', () => seleccionarDia(btn.dataset.fecha));
     });
+}
+
+async function seleccionarDia(fecha) {
+    appState.diaSeleccionado = fecha;
+
+    elements.stepDia.classList.add('hidden');
+    elements.stepHora.classList.remove('hidden');
+
+    const fechaObj = new Date(fecha + 'T00:00:00');
+    elements.diaSeleccionadoText.textContent = fechaObj.toLocaleDateString('es-AR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long'
+    });
+
+    await cargarHoras(fecha);
+}
+
+async function cargarHoras(fecha) {
+    try {
+        elements.horasContainer.innerHTML = '<div class="loading"><div class="spinner"></div><p>Cargando turnos...</p></div>';
+
+        const { data: pedidos, error } = await supabaseClient
+            .from('pedidos')
+            .select('turno_hora')
+            .eq('unidad_negocio', appState.unidadNegocio)
+            .eq('turno_fecha', fecha);
+
+        if (error) throw error;
+
+        const turnosOcupados = new Set();
+        (pedidos || []).forEach(p => turnosOcupados.add(p.turno_hora));
+
+        const turnos = generarTurnosDia(fecha, new Set(
+            Array.from(turnosOcupados).map(h => `${fecha}_${h}`)
+        ));
+
+        renderizarHoras(turnos);
+
+    } catch (error) {
+        console.error('Error al cargar horas:', error);
+        showError('Error al cargar turnos');
+    }
 }
 
 function generarTurnosDia(fechaStr, turnosOcupados) {
     const turnos = [];
-    const fecha = new Date(fechaStr + 'T00:00:00');
 
     for (let hora = CONFIG.HORA_APERTURA; hora <= CONFIG.HORA_CIERRE; hora++) {
         for (let minuto = 0; minuto < 60; minuto += CONFIG.INTERVALO_MINUTOS) {
@@ -178,10 +212,8 @@ function generarTurnosDia(fechaStr, turnosOcupados) {
             const minutoStr = String(minuto).padStart(2, '0');
             const turnoHora = `${horaStr}:${minutoStr}:00`;
 
-            // Crear fecha/hora completa
             const fechaHoraTurno = new Date(`${fechaStr}T${turnoHora}`);
 
-            // Verificar disponibilidad
             const disponible = fechaHoraTurno >= appState.horaMinima &&
                 !turnosOcupados.has(`${fechaStr}_${turnoHora}`);
 
@@ -189,8 +221,7 @@ function generarTurnosDia(fechaStr, turnosOcupados) {
                 turnos.push({
                     fecha: fechaStr,
                     hora: turnoHora,
-                    horaDisplay: `${horaStr}:${minutoStr}`,
-                    disponible: true
+                    horaDisplay: `${horaStr}:${minutoStr}`
                 });
             }
         }
@@ -199,19 +230,41 @@ function generarTurnosDia(fechaStr, turnosOcupados) {
     return turnos;
 }
 
-function seleccionarTurno(btn) {
-    // Deseleccionar todos
-    document.querySelectorAll('.turno-btn').forEach(b => b.classList.remove('selected'));
+function renderizarHoras(turnos) {
+    if (turnos.length === 0) {
+        elements.horasContainer.innerHTML = '<p class="error">No hay turnos disponibles para este día</p>';
+        return;
+    }
 
-    // Seleccionar este
-    btn.classList.add('selected');
+    elements.horasContainer.innerHTML = turnos.map(turno => `
+        <button class="hora-btn" data-hora="${turno.hora}">
+            ${turno.horaDisplay}
+        </button>
+    `).join('');
+
+    document.querySelectorAll('.hora-btn').forEach(btn => {
+        btn.addEventListener('click', () => seleccionarHora(btn.dataset.hora));
+    });
+}
+
+function seleccionarHora(hora) {
+    document.querySelectorAll('.hora-btn').forEach(b => b.classList.remove('selected'));
+    event.target.classList.add('selected');
 
     appState.turnoSeleccionado = {
-        fecha: btn.dataset.fecha,
-        hora: btn.dataset.hora
+        fecha: appState.diaSeleccionado,
+        hora: hora
     };
 
     elements.btnConfirmar.classList.remove('hidden');
+}
+
+function volverADias() {
+    elements.stepHora.classList.add('hidden');
+    elements.stepDia.classList.remove('hidden');
+    appState.diaSeleccionado = null;
+    appState.turnoSeleccionado = null;
+    elements.btnConfirmar.classList.add('hidden');
 }
 
 async function confirmarTurno() {
@@ -224,7 +277,6 @@ async function confirmarTurno() {
     elements.btnConfirmar.textContent = 'Confirmando...';
 
     try {
-        // Crear pedido en Supabase
         const { data, error } = await supabaseClient
             .from('pedidos')
             .insert([{
@@ -238,16 +290,17 @@ async function confirmarTurno() {
                 estado_pago: 'pendiente',
                 promo_seleccionada: 'Pedido desde web',
                 monto: 0,
+                cliente_dni: '00000000',
                 notas_internas: 'Turno seleccionado por el cliente desde web'
             }])
             .select();
 
-        if (error) throw error;
+        if (error) {
+            console.error('Error Supabase:', error);
+            throw error;
+        }
 
-        // Enviar confirmación por WhatsApp
         await enviarConfirmacionWhatsApp();
-
-        // Mostrar éxito
         mostrarExito();
 
     } catch (error) {
@@ -297,7 +350,6 @@ async function enviarConfirmacionWhatsApp() {
         }
     } catch (error) {
         console.error('Error al enviar WhatsApp:', error);
-        // No fallar si el WhatsApp falla
     }
 }
 
@@ -312,7 +364,7 @@ function mostrarExito() {
     });
 
     elements.turnoConfirmado.textContent = fechaFormateada;
-    elements.stepCalendar.classList.add('hidden');
+    elements.stepHora.classList.add('hidden');
     elements.stepSuccess.classList.remove('hidden');
 }
 
@@ -325,4 +377,4 @@ function showError(message) {
     }, 5000);
 }
 
-console.log('📅 Sistema de selección de turno cargado');
+console.log('📅 Sistema de selección de turno V2 cargado');

@@ -56,6 +56,48 @@
             margin-top: 0.5rem;
         }
 
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .progress::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 0;
+        }
+
+        .progress-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #999;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-step.active {
+            background: #FF6700;
+            color: white;
+        }
+
+        .progress-step.completed {
+            background: #4caf50;
+            color: white;
+        }
+
         h2 {
             color: #333;
             margin-bottom: 1.5rem;
@@ -115,84 +157,113 @@
             transform: none;
         }
 
-        .calendar-grid {
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Días */
+        .dias-grid {
             display: grid;
-            gap: 0.75rem;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
             margin-bottom: 1.5rem;
         }
 
-        .dia-card {
+        .dia-btn {
             background: #f8f9fa;
+            border: 2px solid #e0e0e0;
             border-radius: 12px;
-            padding: 1rem;
+            padding: 1.25rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 2px solid transparent;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .dia-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .dia-card.selected {
+        .dia-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
             border-color: #FF6700;
-            background: #fff3e0;
         }
 
-        .dia-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
+        .dia-nombre {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: capitalize;
+            margin-bottom: 0.5rem;
         }
 
-        .dia-fecha {
+        .dia-numero {
+            font-size: 2rem;
             font-weight: 700;
             color: #333;
+            margin-bottom: 0.25rem;
         }
 
-        .dia-badge {
+        .dia-mes {
+            font-size: 0.9rem;
+            color: #999;
+            text-transform: capitalize;
+            margin-bottom: 0.5rem;
+        }
+
+        .dia-badge-small {
             background: #FF6700;
             color: white;
             padding: 0.25rem 0.75rem;
             border-radius: 12px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+
+        .dia-disponibles {
+            font-size: 0.8rem;
+            color: #4caf50;
             font-weight: 600;
         }
 
-        .turnos-disponibles {
+        /* Horas */
+        .horas-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
-            gap: 0.5rem;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 0.5rem;
         }
 
-        .turno-btn {
-            padding: 0.75rem 0.5rem;
+        .hora-btn {
+            padding: 1rem;
             background: white;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            color: #333;
         }
 
-        .turno-btn:hover {
+        .hora-btn:hover {
             border-color: #FF6700;
             background: #fff3e0;
+            transform: scale(1.05);
         }
 
-        .turno-btn.selected {
+        .hora-btn.selected {
             background: #FF6700;
             color: white;
             border-color: #FF6700;
-        }
-
-        .turno-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
         }
 
         .success-message {
@@ -268,6 +339,19 @@
             display: none;
         }
 
+        .dia-seleccionado-header {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .dia-seleccionado-header strong {
+            color: #FF6700;
+            font-size: 1.1rem;
+        }
+
         @media (max-width: 480px) {
             .card {
                 padding: 1.5rem;
@@ -281,8 +365,12 @@
                 font-size: 1.25rem;
             }
 
-            .turnos-disponibles {
-                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            .dias-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .horas-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
             }
         }
     </style>
@@ -296,9 +384,16 @@
                 <div class="logo-subtitle">Selecciona tu turno de retiro</div>
             </div>
 
+            <!-- Indicador de progreso -->
+            <div class="progress">
+                <div class="progress-step active" id="progress-1">1</div>
+                <div class="progress-step" id="progress-2">2</div>
+                <div class="progress-step" id="progress-3">3</div>
+            </div>
+
             <!-- Paso 1: Formulario de datos -->
             <div id="step-form">
-                <h2>📋 Tus datos</h2>
+                <h2>📋 Paso 1: Tus datos</h2>
                 <form id="form-datos">
                     <div class="form-group">
                         <label for="nombre">Nombre completo *</label>
@@ -316,19 +411,32 @@
                 </form>
             </div>
 
-            <!-- Paso 2: Selección de turno -->
-            <div id="step-calendar" class="hidden">
-                <h2>📅 Elegí tu turno</h2>
-                <div id="calendar-container">
+            <!-- Paso 2: Selección de día -->
+            <div id="step-dia" class="hidden">
+                <h2>📅 Paso 2: Elegí el día</h2>
+                <div id="dias-container" class="dias-grid">
                     <div class="loading">
                         <div class="spinner"></div>
-                        <p>Cargando turnos disponibles...</p>
+                        <p>Cargando días disponibles...</p>
                     </div>
                 </div>
+            </div>
+
+            <!-- Paso 3: Selección de hora -->
+            <div id="step-hora" class="hidden">
+                <h2>⏰ Paso 3: Elegí la hora</h2>
+                <div class="dia-seleccionado-header">
+                    <p style="color: #666; margin-bottom: 0.5rem;">Día seleccionado:</p>
+                    <strong id="dia-seleccionado-text"></strong>
+                </div>
+                <div id="horas-container" class="horas-grid">
+                    <!-- Horas se cargan dinámicamente -->
+                </div>
+                <button id="btn-volver-dias" class="btn btn-secondary">← Cambiar día</button>
                 <button id="btn-confirmar" class="btn hidden">Confirmar Turno</button>
             </div>
 
-            <!-- Paso 3: Confirmación -->
+            <!-- Paso 4: Confirmación -->
             <div id="step-success" class="hidden">
                 <div class="success-message">
                     <div class="success-icon">✅</div>
