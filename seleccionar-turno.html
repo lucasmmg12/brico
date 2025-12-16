@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Turno - Grupo Brico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6700 0%, #FF8533 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #555;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #FF6700;
+            box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #FF6700 0%, #FF8533 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 103, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .calendar-grid {
+            display: grid;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .dia-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+        }
+
+        .dia-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .dia-card.selected {
+            border-color: #FF6700;
+            background: #fff3e0;
+        }
+
+        .dia-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .dia-fecha {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .dia-badge {
+            background: #FF6700;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .turnos-disponibles {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 0.5rem;
+        }
+
+        .turno-btn {
+            padding: 0.75rem 0.5rem;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+
+        .turno-btn:hover {
+            border-color: #FF6700;
+            background: #fff3e0;
+        }
+
+        .turno-btn.selected {
+            background: #FF6700;
+            color: white;
+            border-color: #FF6700;
+        }
+
+        .turno-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4caf50;
+            margin-bottom: 1rem;
+        }
+
+        .success-text {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .turno-info {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+
+        .turno-info strong {
+            color: #FF6700;
+            font-size: 1.2rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF6700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 1.5rem;
+            }
+
+            .logo-text {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            .turnos-disponibles {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo">
+                <div class="logo-text">Brico</div>
+                <div class="logo-subtitle">Selecciona tu turno de retiro</div>
+            </div>
+
+            <!-- Paso 1: Formulario de datos -->
+            <div id="step-form">
+                <h2>📋 Tus datos</h2>
+                <form id="form-datos">
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo *</label>
+                        <input type="text" id="nombre" required placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono (con código de área) *</label>
+                        <input type="tel" id="telefono" required placeholder="Ej: 1123456789">
+                    </div>
+                    <button type="submit" class="btn">Continuar →</button>
+                </form>
+            </div>
+
+            <!-- Paso 2: Selección de turno -->
+            <div id="step-calendar" class="hidden">
+                <h2>📅 Elegí tu turno</h2>
+                <div id="calendar-container">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Cargando turnos disponibles...</p>
+                    </div>
+                </div>
+                <button id="btn-confirmar" class="btn hidden">Confirmar Turno</button>
+            </div>
+
+            <!-- Paso 3: Confirmación -->
+            <div id="step-success" class="hidden">
+                <div class="success-message">
+                    <div class="success-icon">✅</div>
+                    <div class="success-title">¡Turno Confirmado!</div>
+                    <div class="turno-info">
+                        <p class="success-text">Tu turno es:</p>
+                        <p><strong id="turno-confirmado"></strong></p>
+                    </div>
+                    <p class="success-text">📱 Te enviamos la confirmación por WhatsApp</p>
+                    <p class="success-text">🆔 <strong>Recordá traer tu DNI</strong></p>
+                </div>
+            </div>
+
+            <!-- Error -->
+            <div id="error-message" class="error hidden"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="seleccionar-turno.js"></script>
+</body>
+
+</html>
