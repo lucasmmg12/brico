@@ -306,7 +306,11 @@
                     </div>
                     <div class="form-group">
                         <label for="telefono">Teléfono (con código de área) *</label>
-                        <input type="tel" id="telefono" required placeholder="Ej: 1123456789">
+                        <input type="tel" id="telefono" required placeholder="Ej: 2645438114" maxlength="10"
+                            pattern="[0-9]{10}">
+                        <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 0.5rem;">
+                            📱 Ingresá 10 dígitos: código de área + número (sin 0 ni 15)
+                        </small>
                     </div>
                     <button type="submit" class="btn">Continuar →</button>
                 </form>

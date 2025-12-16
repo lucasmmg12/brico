@@ -60,13 +60,21 @@ function handleFormSubmit(e) {
     e.preventDefault();
 
     appState.nombre = elements.nombre.value.trim();
-    appState.telefono = elements.telefono.value.trim();
+    let telefono = elements.telefono.value.trim();
 
-    // Validar teléfono
-    if (appState.telefono.length < 10) {
-        showError('Por favor ingresa un teléfono válido');
+    // Limpiar el teléfono (quitar espacios, guiones, etc)
+    telefono = telefono.replace(/\D/g, '');
+
+    // Validar que tenga exactamente 10 dígitos
+    if (telefono.length !== 10) {
+        showError('El teléfono debe tener 10 dígitos (código de área + número, sin 0 ni 15)');
         return;
     }
+
+    // Normalizar: agregar prefijo 549 para WhatsApp
+    appState.telefono = '549' + telefono;
+
+    console.log(`📱 Teléfono normalizado: ${telefono} → ${appState.telefono}`);
 
     // Pasar al calendario
     elements.stepForm.classList.add('hidden');
