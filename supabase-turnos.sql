@@ -40,37 +40,63 @@ CREATE TABLE IF NOT EXISTS turnos_bloqueados (
     UNIQUE(unidad_negocio, fecha, hora_inicio, hora_fin)
 );
 
--- Crear vista de turnos disponibles
-CREATE OR REPLACE VIEW turnos_disponibles AS
-SELECT 
-    tc.unidad_negocio,
-    CURRENT_DATE + interval '1 day' * generate_series(0, 30) AS fecha,
-    (tc.hora_inicio + interval '1 minute' * (tc.intervalo_minutos * generate_series(0, 
-        EXTRACT(EPOCH FROM (tc.hora_fin - tc.hora_inicio)) / 60 / tc.intervalo_minutos
-    )))::TIME AS hora,
-    tc.max_pedidos_por_turno,
-    COALESCE(COUNT(p.id), 0) AS pedidos_asignados,
-    tc.max_pedidos_por_turno - COALESCE(COUNT(p.id), 0) AS cupos_disponibles
-FROM turnos_config tc
-CROSS JOIN generate_series(0, 30) AS dias
-LEFT JOIN pedidos p ON 
-    p.unidad_negocio = tc.unidad_negocio 
-    AND p.turno_fecha = CURRENT_DATE + interval '1 day' * dias
-    AND p.turno_hora = (tc.hora_inicio + interval '1 minute' * (tc.intervalo_minutos * generate_series(0, 
-        EXTRACT(EPOCH FROM (tc.hora_fin - tc.hora_inicio)) / 60 / tc.intervalo_minutos
-    )))::TIME
-WHERE NOT EXISTS (
-    SELECT 1 FROM turnos_bloqueados tb
-    WHERE tb.unidad_negocio = tc.unidad_negocio
-    AND tb.fecha = CURRENT_DATE + interval '1 day' * dias
-    AND (tb.hora_inicio IS NULL OR (tc.hora_inicio + interval '1 minute' * (tc.intervalo_minutos * generate_series(0, 
-        EXTRACT(EPOCH FROM (tc.hora_fin - tc.hora_inicio)) / 60 / tc.intervalo_minutos
-    )))::TIME BETWEEN tb.hora_inicio AND tb.hora_fin)
+-- Función para obtener turnos disponibles de un día
+CREATE OR REPLACE FUNCTION obtener_turnos_dia(
+    p_unidad_negocio TEXT,
+    p_fecha DATE
 )
-GROUP BY tc.unidad_negocio, fecha, hora, tc.max_pedidos_por_turno
-HAVING (tc.hora_inicio + interval '1 minute' * (tc.intervalo_minutos * generate_series(0, 
-    EXTRACT(EPOCH FROM (tc.hora_fin - tc.hora_inicio)) / 60 / tc.intervalo_minutos
-)))::TIME <= tc.hora_fin;
+RETURNS TABLE (
+    fecha DATE,
+    hora TIME,
+    max_pedidos INTEGER,
+    pedidos_asignados BIGINT,
+    cupos_disponibles BIGINT
+) AS $$
+DECLARE
+    v_hora_inicio TIME;
+    v_hora_fin TIME;
+    v_intervalo INTEGER;
+    v_max_pedidos INTEGER;
+    v_hora_actual TIME;
+BEGIN
+    -- Obtener configuración
+    SELECT hora_inicio, hora_fin, intervalo_minutos, max_pedidos_por_turno
+    INTO v_hora_inicio, v_hora_fin, v_intervalo, v_max_pedidos
+    FROM turnos_config
+    WHERE unidad_negocio = p_unidad_negocio;
+
+    -- Generar turnos
+    v_hora_actual := v_hora_inicio;
+    
+    WHILE v_hora_actual <= v_hora_fin LOOP
+        -- Verificar si el turno está bloqueado
+        IF NOT EXISTS (
+            SELECT 1 FROM turnos_bloqueados tb
+            WHERE tb.unidad_negocio = p_unidad_negocio
+            AND tb.fecha = p_fecha
+            AND (tb.hora_inicio IS NULL OR v_hora_actual BETWEEN tb.hora_inicio AND tb.hora_fin)
+        ) THEN
+            -- Contar pedidos asignados
+            RETURN QUERY
+            SELECT 
+                p_fecha,
+                v_hora_actual,
+                v_max_pedidos,
+                COALESCE(COUNT(p.id), 0)::BIGINT,
+                (v_max_pedidos - COALESCE(COUNT(p.id), 0))::BIGINT
+            FROM (SELECT 1) AS dummy
+            LEFT JOIN pedidos p ON 
+                p.unidad_negocio = p_unidad_negocio 
+                AND p.turno_fecha = p_fecha
+                AND p.turno_hora = v_hora_actual
+            GROUP BY p_fecha, v_hora_actual, v_max_pedidos;
+        END IF;
+        
+        -- Incrementar hora
+        v_hora_actual := v_hora_actual + (v_intervalo || ' minutes')::INTERVAL;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Función para obtener próximo turno disponible
 CREATE OR REPLACE FUNCTION obtener_proximo_turno_disponible(
@@ -82,19 +108,29 @@ RETURNS TABLE (
     hora TIME,
     cupos_disponibles BIGINT
 ) AS $$
+DECLARE
+    v_fecha_inicio DATE;
+    v_fecha_actual DATE;
+    v_fecha_fin DATE;
 BEGIN
-    RETURN QUERY
-    SELECT 
-        td.fecha::DATE,
-        td.hora::TIME,
-        td.cupos_disponibles
-    FROM turnos_disponibles td
-    WHERE td.unidad_negocio = p_unidad_negocio
-    AND td.cupos_disponibles > 0
-    AND (p_fecha_preferida IS NULL OR td.fecha = p_fecha_preferida)
-    AND td.fecha >= CURRENT_DATE
-    ORDER BY td.fecha, td.hora
-    LIMIT 1;
+    v_fecha_inicio := COALESCE(p_fecha_preferida, CURRENT_DATE);
+    v_fecha_fin := v_fecha_inicio + INTERVAL '30 days';
+    v_fecha_actual := v_fecha_inicio;
+    
+    WHILE v_fecha_actual <= v_fecha_fin LOOP
+        RETURN QUERY
+        SELECT t.fecha, t.hora, t.cupos_disponibles
+        FROM obtener_turnos_dia(p_unidad_negocio, v_fecha_actual) t
+        WHERE t.cupos_disponibles > 0
+        ORDER BY t.fecha, t.hora
+        LIMIT 1;
+        
+        IF FOUND THEN
+            RETURN;
+        END IF;
+        
+        v_fecha_actual := v_fecha_actual + INTERVAL '1 day';
+    END LOOP;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -103,13 +139,23 @@ ALTER TABLE turnos_config ENABLE ROW LEVEL SECURITY;
 ALTER TABLE turnos_bloqueados ENABLE ROW LEVEL SECURITY;
 
 -- Políticas de acceso público (para desarrollo)
+DROP POLICY IF EXISTS "Permitir lectura pública de turnos_config" ON turnos_config;
 CREATE POLICY "Permitir lectura pública de turnos_config" ON turnos_config FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Permitir lectura pública de turnos_bloqueados" ON turnos_bloqueados;
 CREATE POLICY "Permitir lectura pública de turnos_bloqueados" ON turnos_bloqueados FOR SELECT USING (true);
 
 -- Políticas de escritura (solo admin)
+DROP POLICY IF EXISTS "Permitir inserción de turnos_config" ON turnos_config;
 CREATE POLICY "Permitir inserción de turnos_config" ON turnos_config FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Permitir actualización de turnos_config" ON turnos_config;
 CREATE POLICY "Permitir actualización de turnos_config" ON turnos_config FOR UPDATE USING (true);
+
+DROP POLICY IF EXISTS "Permitir inserción de turnos_bloqueados" ON turnos_bloqueados;
 CREATE POLICY "Permitir inserción de turnos_bloqueados" ON turnos_bloqueados FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Permitir eliminación de turnos_bloqueados" ON turnos_bloqueados;
 CREATE POLICY "Permitir eliminación de turnos_bloqueados" ON turnos_bloqueados FOR DELETE USING (true);
 
 -- Índices para mejorar performance
@@ -121,3 +167,5 @@ COMMENT ON TABLE turnos_bloqueados IS 'Turnos bloqueados por feriados, mantenimi
 COMMENT ON COLUMN pedidos.turno_fecha IS 'Fecha del turno de entrega';
 COMMENT ON COLUMN pedidos.turno_hora IS 'Hora del turno de entrega';
 COMMENT ON COLUMN pedidos.turno_confirmado IS 'Si el cliente confirmó el turno';
+COMMENT ON FUNCTION obtener_turnos_dia IS 'Obtiene todos los turnos de un día específico con disponibilidad';
+COMMENT ON FUNCTION obtener_proximo_turno_disponible IS 'Obtiene el próximo turno disponible a partir de una fecha';
