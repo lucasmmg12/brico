@@ -283,8 +283,8 @@ function crearFilaPedido(pedido) {
     const esPedidoHoy = pedido.created_at.startsWith(today);
     const esEntregaHoy = pedido.fecha_entrega === today;
 
-    // URL de WhatsApp
-    const whatsappUrl = `https://wa.me/549${pedido.cliente_telefono}?text=Hola%20${encodeURIComponent(pedido.cliente_nombre)},%20te%20contactamos%20desde%20Grupo%20Brico%20por%20tu%20pedido.`;
+    // URL de WhatsApp - El número ya viene con 549 incluido
+    const whatsappUrl = `https://wa.me/${pedido.cliente_telefono}?text=${encodeURIComponent(`Hola ${pedido.cliente_nombre}, te contactamos desde Grupo Brico por tu pedido de "${pedido.promo_seleccionada}". ¿En qué podemos ayudarte?`)}`;
 
     return `
         <tr data-id="${pedido.id}">
