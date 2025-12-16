@@ -25,7 +25,7 @@ const appState = {
 };
 
 const elements = {
-    tabs: document.querySelectorAll('.tab'),
+    tabs: document.querySelectorAll('.tab-modern'),
     btnRefresh: document.getElementById('btn-refresh'),
     btnNuevoPedido: document.getElementById('btn-nuevo-pedido'),
     btnNuevoPedidoEmpty: document.getElementById('btn-nuevo-pedido-empty'),
