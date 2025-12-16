@@ -301,6 +301,11 @@ function marcarPedidoListo(pedidoId) {
 function guardarPedido(e) {
     e.preventDefault();
 
+    const monto = parseFloat(elements.inputMonto.value);
+
+    // Si el monto es mayor a 0, automáticamente se marca como pagado
+    const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
+
     const pedidoData = {
         id: appState.editandoPedido || String(PEDIDOS_MOCK.length + 1),
         created_at: new Date().toISOString(),
@@ -308,9 +313,9 @@ function guardarPedido(e) {
         cliente_dni: elements.inputDni.value.trim(),
         unidad_negocio: elements.inputUnidad.value,
         promo_seleccionada: elements.inputPromo.value.trim(),
-        monto: parseFloat(elements.inputMonto.value),
+        monto: monto,
         comprobante_url: elements.inputComprobante.value.trim() || null,
-        estado_pago: 'pendiente',
+        estado_pago: estadoPago,
         estado_pedido: 'nuevo',
         fecha_entrega: elements.inputFechaEntrega.value || null,
         notas_internas: elements.inputNotas.value.trim() || null
