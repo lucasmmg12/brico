@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario de Entregas - Grupo Brico</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-v3.css">
+    <link rel="stylesheet" href="styles-modern.css">
+    <link rel="stylesheet" href="styles-calendario.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+</head>
+
+<body class="modern-body">
+    <!-- Header Principal -->
+    <header class="header-modern">
+        <div class="header-container">
+            <div class="logo-section-modern">
+                <div class="logo-modern">Brico</div>
+                <div class="logo-subtitle-modern">Calendario de Entregas</div>
+            </div>
+
+            <!-- Tabs de Unidad de Negocio -->
+            <nav class="tabs-modern">
+                <button class="tab-modern active" data-unidad="Mayorista">
+                    <span class="tab-icon">📦</span>
+                    Mayorista
+                </button>
+                <button class="tab-modern" data-unidad="Express">
+                    <span class="tab-icon">⚡</span>
+                    Express
+                </button>
+            </nav>
+
+            <!-- Navegación -->
+            <div class="header-nav-modern">
+                <a href="index.html" class="btn-nav-modern">
+                    <span class="btn-icon">📋</span>
+                    Dashboard
+                </a>
+                <a href="estadisticas.html" class="btn-nav-modern">
+                    <span class="btn-icon">📊</span>
+                    Estadísticas
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="main-container-modern">
+        <!-- Selector de Fecha -->
+        <div class="calendar-controls">
+            <button id="btn-prev-day" class="btn-calendar">◀ Día Anterior</button>
+            <input type="date" id="fecha-seleccionada" class="input-fecha">
+            <button id="btn-next-day" class="btn-calendar">Día Siguiente ▶</button>
+            <button id="btn-hoy" class="btn-calendar-primary">Hoy</button>
+        </div>
+
+        <!-- Resumen del Día -->
+        <div class="metrics-grid-modern" style="margin-bottom: 2rem;">
+            <div class="metric-card-modern metric-primary">
+                <div class="metric-icon">📅</div>
+                <div class="metric-content">
+                    <div class="metric-label">Turnos totales</div>
+                    <div class="metric-value" id="stat-turnos-totales">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-success">
+                <div class="metric-icon">✅</div>
+                <div class="metric-content">
+                    <div class="metric-label">Turnos ocupados</div>
+                    <div class="metric-value" id="stat-turnos-ocupados">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-warning">
+                <div class="metric-icon">🕐</div>
+                <div class="metric-content">
+                    <div class="metric-label">Turnos disponibles</div>
+                    <div class="metric-value" id="stat-turnos-disponibles">0</div>
+                </div>
+            </div>
+
+            <div class="metric-card-modern metric-money">
+                <div class="metric-icon">📦</div>
+                <div class="metric-content">
+                    <div class="metric-label">Pedidos a entregar</div>
+                    <div class="metric-value" id="stat-pedidos-entregar">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calendario de Turnos -->
+        <div class="calendar-container">
+            <h2 class="calendar-title">
+                <span class="calendar-icon">🗓️</span>
+                Turnos del día - <span id="fecha-display"></span>
+            </h2>
+
+            <div id="turnos-grid" class="turnos-grid">
+                <!-- Los turnos se cargarán dinámicamente -->
+            </div>
+
+            <div id="empty-calendar" class="empty-state" style="display: none;">
+                <div class="empty-icon">📅</div>
+                <h3>No hay turnos programados</h3>
+                <p>No hay entregas programadas para este día</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Detalles del Turno -->
+    <div id="modal-turno" class="modal-modern">
+        <div class="modal-overlay"></div>
+        <div class="modal-content-modern">
+            <div class="modal-header-modern">
+                <h2 id="modal-turno-title">Detalles del Turno</h2>
+                <button class="modal-close-modern" id="close-turno">✕</button>
+            </div>
+            <div class="modal-body-modern">
+                <div id="turno-pedidos-list">
+                    <!-- Lista de pedidos del turno -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="calendario-entregas.js"></script>
+</body>
+
+</html>
