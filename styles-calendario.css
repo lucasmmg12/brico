@@ -1,331 +1,461 @@
 /* ============================================
-   ESTILOS DEL CALENDARIO DE ENTREGAS
+   CALENDARIO V2 - ESTILOS MODERNOS
+   Inspirado en Calendly y Google Calendar
    ============================================ */
 
-/* Controles del Calendario */
-.calendar-controls {
+/* Controles V2 */
+.calendar-controls-v2 {
     display: flex;
     gap: 1rem;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     margin-bottom: 2rem;
     flex-wrap: wrap;
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
 
-.btn-calendar {
-    padding: 0.75rem 1.5rem;
+.calendar-info {
+    flex: 1;
+    text-align: center;
+}
+
+.rango-fechas {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.25rem;
+}
+
+.info-anticipacion {
+    font-size: 0.875rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.btn-calendar-v2 {
+    padding: 0.875rem 1.5rem;
     background: white;
-    border: 2px solid var(--color-primary);
-    color: var(--color-primary);
-    border-radius: 8px;
+    border: 2px solid #e0e0e0;
+    color: var(--color-text);
+    border-radius: 12px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
 }
 
-.btn-calendar:hover {
-    background: var(--color-primary);
-    color: white;
+.btn-calendar-v2:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 103, 0, 0.15);
 }
 
-.btn-calendar-primary {
-    padding: 0.75rem 2rem;
+.btn-calendar-primary-v2 {
+    padding: 0.875rem 2rem;
     background: var(--color-primary);
     border: none;
     color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
 }
 
-.btn-calendar-primary:hover {
+.btn-calendar-primary-v2:hover {
     background: var(--color-primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(255, 103, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(255, 103, 0, 0.3);
 }
 
-.input-fecha {
-    padding: 0.75rem 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--color-text);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.input-fecha:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(255, 103, 0, 0.1);
-}
-
-/* Contenedor del Calendario */
-.calendar-container {
-    background: white;
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-}
-
-.calendar-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--color-text);
+/* Estadísticas Rápidas */
+.stats-rapidas {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
     margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 1rem;
+    transition: all 0.2s ease;
 }
 
-.calendar-icon {
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.stat-destacada {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #ff8533 100%);
+    color: white;
+}
+
+.stat-destacada .stat-label,
+.stat-destacada .stat-value,
+.stat-destacada .stat-value-small {
+    color: white;
+}
+
+.stat-icon {
     font-size: 2rem;
 }
 
-/* Grid de Turnos */
-.turnos-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
+.stat-content {
+    flex: 1;
 }
 
-.turno-card {
+.stat-label {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+.stat-value-small {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}
+
+/* Calendario Grid V2 */
+.calendario-container-v2 {
     background: white;
-    border: 2px solid #e0e0e0;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.calendario-grid-v2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+/* Columna de Día */
+.dia-columna {
+    background: #f8f9fa;
     border-radius: 12px;
-    padding: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
     overflow: hidden;
+    min-width: 140px;
+    transition: all 0.2s ease;
 }
 
-.turno-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: #e0e0e0;
-    transition: all 0.3s ease;
-}
-
-.turno-card:hover {
+.dia-columna:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.dia-hoy {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+}
+
+.dia-header {
+    background: white;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 3px solid var(--color-primary);
+    position: relative;
+}
+
+.dia-hoy .dia-header {
+    background: var(--color-primary);
+    color: white;
+}
+
+.dia-nombre {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.25rem;
+}
+
+.dia-numero {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.dia-mes {
+    font-size: 0.875rem;
+    text-transform: capitalize;
+    opacity: 0.8;
+    margin-top: 0.25rem;
+}
+
+.dia-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    background: rgba(255, 255, 255, 0.3);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+/* Lista de Turnos */
+.turnos-lista {
+    padding: 0.75rem;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.turnos-lista::-webkit-scrollbar {
+    width: 6px;
+}
+
+.turnos-lista::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.turnos-lista::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    border-radius: 10px;
+}
+
+.sin-turnos {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: #999;
+    font-size: 0.875rem;
+}
+
+/* Slot de Turno */
+.turno-slot {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 2px solid transparent;
+    position: relative;
+}
+
+.turno-slot:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Estados de Turno */
 .turno-disponible {
     border-color: #4caf50;
+    background: #f1f8f4;
 }
 
-.turno-disponible::before {
-    background: #4caf50;
-}
-
-.turno-parcial {
-    border-color: #ff9800;
-}
-
-.turno-parcial::before {
-    background: #ff9800;
-}
-
-.turno-completo {
-    border-color: #f44336;
-}
-
-.turno-completo::before {
-    background: #f44336;
-}
-
-.turno-hora {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin-bottom: 0.5rem;
-}
-
-.turno-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.turno-pedidos {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--color-primary);
-}
-
-.turno-estado {
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    background: #f5f5f5;
-    color: #666;
-}
-
-.turno-disponible .turno-estado {
+.turno-disponible:hover {
     background: #e8f5e9;
-    color: #4caf50;
+    border-color: #2e7d32;
 }
 
-.turno-parcial .turno-estado {
-    background: #fff3e0;
-    color: #ff9800;
-}
-
-.turno-completo .turno-estado {
+.turno-ocupado {
+    border-color: #f44336;
     background: #ffebee;
-    color: #f44336;
+    cursor: pointer;
 }
 
-.turno-preview {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #e0e0e0;
+.turno-ocupado:hover {
+    background: #ffcdd2;
+    border-color: #c62828;
 }
 
-.turno-pedido-mini {
-    font-size: 0.85rem;
-    color: #666;
-    margin-bottom: 0.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.turno-no-disponible {
+    border-color: #9e9e9e;
+    background: #f5f5f5;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
-.turno-mas {
-    font-size: 0.75rem;
-    color: var(--color-primary);
+.turno-no-disponible:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.turno-hora-text {
     font-weight: 600;
-    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    color: var(--color-text);
 }
 
-/* Modal de Turno */
-.empty-turno {
+.turno-icono {
+    font-size: 1.25rem;
+}
+
+.turno-cliente {
+    position: absolute;
+    bottom: 0.25rem;
+    left: 0.75rem;
+    font-size: 0.7rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Leyenda */
+.calendario-leyenda {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 1rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.leyenda-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #666;
+}
+
+.leyenda-color {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.leyenda-color.disponible {
+    background: #e8f5e9;
+    border: 2px solid #4caf50;
+    color: #2e7d32;
+}
+
+.leyenda-color.ocupado {
+    background: #ffebee;
+    border: 2px solid #f44336;
+    color: #c62828;
+}
+
+.leyenda-color.no-disponible {
+    background: #f5f5f5;
+    border: 2px solid #9e9e9e;
+    color: #666;
+}
+
+/* Loading */
+.loading-calendar {
+    grid-column: 1 / -1;
     text-align: center;
-    padding: 2rem;
+    padding: 4rem 2rem;
     color: #999;
 }
 
-.turno-disponibles {
-    color: var(--color-primary);
-    font-weight: 600;
-    margin-top: 0.5rem;
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--color-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
 }
 
-.turno-pedidos-header {
-    background: #f5f5f5;
-    padding: 1rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
-.turno-pedidos-header strong {
-    color: var(--color-primary);
-}
-
-.turno-pedidos-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.turno-pedido-card {
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 1rem;
-    transition: all 0.3s ease;
-}
-
-.turno-pedido-card:hover {
-    border-color: var(--color-primary);
-    box-shadow: 0 4px 12px rgba(255, 103, 0, 0.1);
-}
-
-.pedido-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.75rem;
-}
-
-.pedido-header strong {
-    font-size: 1.1rem;
-    color: var(--color-text);
-}
-
-.badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.badge-nuevo {
-    background: #e3f2fd;
-    color: #1976d2;
-}
-
-.badge-armado {
-    background: #fff3e0;
-    color: #f57c00;
-}
-
-.badge-entregado {
-    background: #e8f5e9;
-    color: #388e3c;
-}
-
-.pedido-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    color: #666;
-    font-size: 0.95rem;
-}
-
-.pedido-notas {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
+/* Modal Mejorado */
+.pedido-acciones {
+    margin-top: 1rem;
+    padding-top: 1rem;
     border-top: 1px solid #e0e0e0;
-    color: #666;
-    font-size: 0.9rem;
-    font-style: italic;
+}
+
+.btn-whatsapp {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: #25d366;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-whatsapp:hover {
+    background: #128c7e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .turnos-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 0.75rem;
-    }
-
-    .turno-card {
-        padding: 0.75rem;
-    }
-
-    .turno-hora {
-        font-size: 1.25rem;
-    }
-
-    .calendar-controls {
+    .calendar-controls-v2 {
         flex-direction: column;
     }
 
-    .btn-calendar,
-    .btn-calendar-primary {
+    .btn-calendar-v2,
+    .btn-calendar-primary-v2 {
         width: 100%;
+    }
+
+    .calendario-grid-v2 {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .dia-columna {
+        min-width: 120px;
+    }
+
+    .stats-rapidas {
+        grid-template-columns: 1fr;
+    }
+
+    .calendario-leyenda {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .rango-fechas {
+        font-size: 1.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .dia-numero {
+        font-size: 1.5rem;
     }
 }

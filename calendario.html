@@ -52,64 +52,70 @@
 
     <!-- Contenedor Principal -->
     <main class="main-container-modern">
-        <!-- Selector de Fecha -->
-        <div class="calendar-controls">
-            <button id="btn-prev-day" class="btn-calendar">◀ Día Anterior</button>
-            <input type="date" id="fecha-seleccionada" class="input-fecha">
-            <button id="btn-next-day" class="btn-calendar">Día Siguiente ▶</button>
-            <button id="btn-hoy" class="btn-calendar-primary">Hoy</button>
+        <!-- Controles de Navegación -->
+        <div class="calendar-controls-v2">
+            <button id="btn-prev-week" class="btn-calendar-v2">
+                ← Semana Anterior
+            </button>
+            <div class="calendar-info">
+                <div class="rango-fechas" id="rango-fechas">Cargando...</div>
+                <div class="info-anticipacion">Turnos disponibles desde +4 horas</div>
+            </div>
+            <button id="btn-next-week" class="btn-calendar-v2">
+                Semana Siguiente →
+            </button>
+            <button id="btn-hoy" class="btn-calendar-primary-v2">
+                📅 Hoy
+            </button>
         </div>
 
-        <!-- Resumen del Día -->
-        <div class="metrics-grid-modern" style="margin-bottom: 2rem;">
-            <div class="metric-card-modern metric-primary">
-                <div class="metric-icon">📅</div>
-                <div class="metric-content">
-                    <div class="metric-label">Turnos totales</div>
-                    <div class="metric-value" id="stat-turnos-totales">0</div>
+        <!-- Estadísticas Rápidas -->
+        <div class="stats-rapidas">
+            <div class="stat-card">
+                <div class="stat-icon">🟢</div>
+                <div class="stat-content">
+                    <div class="stat-label">Turnos disponibles</div>
+                    <div class="stat-value" id="stat-turnos-disponibles">0</div>
                 </div>
             </div>
 
-            <div class="metric-card-modern metric-success">
-                <div class="metric-icon">✅</div>
-                <div class="metric-content">
-                    <div class="metric-label">Turnos ocupados</div>
-                    <div class="metric-value" id="stat-turnos-ocupados">0</div>
+            <div class="stat-card">
+                <div class="stat-icon">🔴</div>
+                <div class="stat-content">
+                    <div class="stat-label">Turnos ocupados</div>
+                    <div class="stat-value" id="stat-turnos-ocupados">0</div>
                 </div>
             </div>
 
-            <div class="metric-card-modern metric-warning">
-                <div class="metric-icon">🕐</div>
-                <div class="metric-content">
-                    <div class="metric-label">Turnos disponibles</div>
-                    <div class="metric-value" id="stat-turnos-disponibles">0</div>
-                </div>
-            </div>
-
-            <div class="metric-card-modern metric-money">
-                <div class="metric-icon">📦</div>
-                <div class="metric-content">
-                    <div class="metric-label">Pedidos a entregar</div>
-                    <div class="metric-value" id="stat-pedidos-entregar">0</div>
+            <div class="stat-card stat-destacada">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-content">
+                    <div class="stat-label">Próximo turno disponible</div>
+                    <div class="stat-value-small" id="stat-proximo-turno">--</div>
                 </div>
             </div>
         </div>
 
-        <!-- Calendario de Turnos -->
-        <div class="calendar-container">
-            <h2 class="calendar-title">
-                <span class="calendar-icon">🗓️</span>
-                Turnos del día - <span id="fecha-display"></span>
-            </h2>
-
-            <div id="turnos-grid" class="turnos-grid">
-                <!-- Los turnos se cargarán dinámicamente -->
+        <!-- Calendario Semanal -->
+        <div class="calendario-container-v2">
+            <div id="calendario-grid" class="calendario-grid-v2">
+                <!-- Los días se cargarán dinámicamente -->
             </div>
+        </div>
 
-            <div id="empty-calendar" class="empty-state" style="display: none;">
-                <div class="empty-icon">📅</div>
-                <h3>No hay turnos programados</h3>
-                <p>No hay entregas programadas para este día</p>
+        <!-- Leyenda -->
+        <div class="calendario-leyenda">
+            <div class="leyenda-item">
+                <span class="leyenda-color disponible">✓</span>
+                <span>Disponible</span>
+            </div>
+            <div class="leyenda-item">
+                <span class="leyenda-color ocupado">✕</span>
+                <span>Ocupado</span>
+            </div>
+            <div class="leyenda-item">
+                <span class="leyenda-color no-disponible">🔒</span>
+                <span>No disponible (menos de 4hs)</span>
             </div>
         </div>
     </main>
@@ -124,7 +130,7 @@
             </div>
             <div class="modal-body-modern">
                 <div id="turno-pedidos-list">
-                    <!-- Lista de pedidos del turno -->
+                    <!-- Detalles del pedido -->
                 </div>
             </div>
         </div>

@@ -1,5 +1,6 @@
 // ============================================
-// CALENDARIO DE ENTREGAS - GRUPO BRICO
+// CALENDARIO DE ENTREGAS V2 - GRUPO BRICO
+// Diseño moderno inspirado en Calendly
 // ============================================
 
 // Inicializar Supabase
@@ -8,24 +9,30 @@ const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey
 
 const appState = {
     unidadActual: 'Mayorista',
-    fechaSeleccionada: new Date().toISOString().split('T')[0],
-    turnos: [],
-    pedidos: []
+    fechaInicio: new Date(),
+    diasMostrados: 7,
+    turnosPorDia: {},
+    pedidosPorDia: {},
+    horaMinima: null // Se calculará dinámicamente (+4 horas desde ahora)
+};
+
+const CONFIG = {
+    HORAS_ANTICIPACION: 4,
+    HORA_APERTURA: 9,
+    HORA_CIERRE: 23,
+    INTERVALO_MINUTOS: 10
 };
 
 const elements = {
     tabs: document.querySelectorAll('.tab-modern'),
-    fechaInput: document.getElementById('fecha-seleccionada'),
-    btnPrevDay: document.getElementById('btn-prev-day'),
-    btnNextDay: document.getElementById('btn-next-day'),
+    calendarioGrid: document.getElementById('calendario-grid'),
+    btnPrevWeek: document.getElementById('btn-prev-week'),
+    btnNextWeek: document.getElementById('btn-next-week'),
     btnHoy: document.getElementById('btn-hoy'),
-    fechaDisplay: document.getElementById('fecha-display'),
-    turnosGrid: document.getElementById('turnos-grid'),
-    emptyCalendar: document.getElementById('empty-calendar'),
-    statTurnosTotales: document.getElementById('stat-turnos-totales'),
-    statTurnosOcupados: document.getElementById('stat-turnos-ocupados'),
+    rangoFechas: document.getElementById('rango-fechas'),
     statTurnosDisponibles: document.getElementById('stat-turnos-disponibles'),
-    statPedidosEntregar: document.getElementById('stat-pedidos-entregar'),
+    statTurnosOcupados: document.getElementById('stat-turnos-ocupados'),
+    statProximoTurno: document.getElementById('stat-proximo-turno'),
     modalTurno: document.getElementById('modal-turno'),
     modalTurnoTitle: document.getElementById('modal-turno-title'),
     turnoPedidosList: document.getElementById('turno-pedidos-list'),
@@ -34,10 +41,9 @@ const elements = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('📅 Calendario de Entregas inicializado');
+    console.log('📅 Calendario V2 inicializado');
+    calcularHoraMinima();
     initEventListeners();
-    elements.fechaInput.value = appState.fechaSeleccionada;
-    actualizarFechaDisplay();
     cargarCalendario();
 });
 
@@ -46,18 +52,11 @@ function initEventListeners() {
         tab.addEventListener('click', () => cambiarUnidad(tab.dataset.unidad));
     });
 
-    elements.fechaInput.addEventListener('change', (e) => {
-        appState.fechaSeleccionada = e.target.value;
-        actualizarFechaDisplay();
-        cargarCalendario();
-    });
-
-    elements.btnPrevDay.addEventListener('click', () => cambiarDia(-1));
-    elements.btnNextDay.addEventListener('click', () => cambiarDia(1));
+    elements.btnPrevWeek.addEventListener('click', () => cambiarSemana(-7));
+    elements.btnNextWeek.addEventListener('click', () => cambiarSemana(7));
     elements.btnHoy.addEventListener('click', () => {
-        appState.fechaSeleccionada = new Date().toISOString().split('T')[0];
-        elements.fechaInput.value = appState.fechaSeleccionada;
-        actualizarFechaDisplay();
+        appState.fechaInicio = new Date();
+        calcularHoraMinima();
         cargarCalendario();
     });
 
@@ -79,177 +78,298 @@ function cambiarUnidad(unidad) {
     cargarCalendario();
 }
 
-function cambiarDia(dias) {
-    const fecha = new Date(appState.fechaSeleccionada);
-    fecha.setDate(fecha.getDate() + dias);
-    appState.fechaSeleccionada = fecha.toISOString().split('T')[0];
-    elements.fechaInput.value = appState.fechaSeleccionada;
-    actualizarFechaDisplay();
-    cargarCalendario();
+function cambiarSemana(dias) {
+    const nuevaFecha = new Date(appState.fechaInicio);
+    nuevaFecha.setDate(nuevaFecha.getDate() + dias);
+
+    // No permitir ir al pasado
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    if (nuevaFecha >= hoy) {
+        appState.fechaInicio = nuevaFecha;
+        calcularHoraMinima();
+        cargarCalendario();
+    }
 }
 
-function actualizarFechaDisplay() {
-    const fecha = new Date(appState.fechaSeleccionada + 'T00:00:00');
-    const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    elements.fechaDisplay.textContent = fecha.toLocaleDateString('es-AR', opciones);
+function calcularHoraMinima() {
+    const ahora = new Date();
+    const horaMinima = new Date(ahora.getTime() + CONFIG.HORAS_ANTICIPACION * 60 * 60 * 1000);
+    appState.horaMinima = horaMinima;
+
+    console.log(`⏰ Hora mínima para turnos: ${horaMinima.toLocaleString('es-AR')}`);
 }
 
 async function cargarCalendario() {
     try {
-        // Cargar pedidos del día
+        mostrarCargando();
+
+        // Calcular rango de fechas
+        const fechas = [];
+        for (let i = 0; i < appState.diasMostrados; i++) {
+            const fecha = new Date(appState.fechaInicio);
+            fecha.setDate(fecha.getDate() + i);
+            fechas.push(fecha.toISOString().split('T')[0]);
+        }
+
+        // Cargar pedidos de toda la semana
         const { data: pedidos, error } = await supabaseClient
             .from('pedidos')
             .select('*')
             .eq('unidad_negocio', appState.unidadActual)
-            .eq('turno_fecha', appState.fechaSeleccionada)
+            .in('turno_fecha', fechas)
+            .not('turno_fecha', 'is', null)
+            .order('turno_fecha', { ascending: true })
             .order('turno_hora', { ascending: true });
 
         if (error) throw error;
 
-        appState.pedidos = pedidos || [];
+        // Organizar pedidos por día
+        appState.pedidosPorDia = {};
+        (pedidos || []).forEach(pedido => {
+            if (!appState.pedidosPorDia[pedido.turno_fecha]) {
+                appState.pedidosPorDia[pedido.turno_fecha] = [];
+            }
+            appState.pedidosPorDia[pedido.turno_fecha].push(pedido);
+        });
 
-        // Generar turnos del día (09:00 a 23:00, cada 10 minutos)
-        generarTurnos();
+        // Generar turnos para cada día
+        generarTurnosSemana(fechas);
         renderizarCalendario();
         actualizarEstadisticas();
+        actualizarRangoFechas();
 
-        console.log(`✅ Calendario cargado: ${appState.pedidos.length} pedidos`);
+        console.log(`✅ Calendario cargado: ${pedidos?.length || 0} pedidos`);
     } catch (error) {
         console.error('❌ Error al cargar calendario:', error);
         showToast('Error al cargar calendario', 'error');
     }
 }
 
-function generarTurnos() {
-    const turnos = [];
-    const horaInicio = 9; // 09:00
-    const horaFin = 23; // 23:00
-    const intervalo = 10; // minutos
+function generarTurnosSemana(fechas) {
+    appState.turnosPorDia = {};
 
-    for (let hora = horaInicio; hora <= horaFin; hora++) {
-        for (let minuto = 0; minuto < 60; minuto += intervalo) {
-            if (hora === horaFin && minuto > 0) break; // No pasar de 23:00
+    fechas.forEach(fechaStr => {
+        const fecha = new Date(fechaStr + 'T00:00:00');
+        const turnos = [];
+        const pedidosDia = appState.pedidosPorDia[fechaStr] || [];
 
-            const horaStr = String(hora).padStart(2, '0');
-            const minutoStr = String(minuto).padStart(2, '0');
-            const turnoHora = `${horaStr}:${minutoStr}:00`;
+        for (let hora = CONFIG.HORA_APERTURA; hora <= CONFIG.HORA_CIERRE; hora++) {
+            for (let minuto = 0; minuto < 60; minuto += CONFIG.INTERVALO_MINUTOS) {
+                if (hora === CONFIG.HORA_CIERRE && minuto > 0) break;
 
-            // Contar pedidos en este turno
-            const pedidosTurno = appState.pedidos.filter(p => p.turno_hora === turnoHora);
+                const horaStr = String(hora).padStart(2, '0');
+                const minutoStr = String(minuto).padStart(2, '0');
+                const turnoHora = `${horaStr}:${minutoStr}:00`;
 
-            turnos.push({
-                hora: turnoHora,
-                horaDisplay: `${horaStr}:${minutoStr}`,
-                pedidos: pedidosTurno,
-                ocupado: pedidosTurno.length > 0,
-                cupos: 1, // Máximo 1 pedido por turno
-                disponibles: 1 - pedidosTurno.length
-            });
+                // Crear fecha/hora completa del turno
+                const fechaHoraTurno = new Date(`${fechaStr}T${turnoHora}`);
+
+                // Verificar si el turno está disponible (+4 horas)
+                const disponible = fechaHoraTurno >= appState.horaMinima;
+
+                // Buscar pedido asignado
+                const pedido = pedidosDia.find(p => p.turno_hora === turnoHora);
+
+                turnos.push({
+                    hora: turnoHora,
+                    horaDisplay: `${horaStr}:${minutoStr}`,
+                    fecha: fechaStr,
+                    fechaHora: fechaHoraTurno,
+                    disponible: disponible,
+                    ocupado: !!pedido,
+                    pedido: pedido || null
+                });
+            }
         }
-    }
 
-    appState.turnos = turnos;
-}
-
-function renderizarCalendario() {
-    if (appState.turnos.length === 0) {
-        elements.turnosGrid.style.display = 'none';
-        elements.emptyCalendar.style.display = 'block';
-        return;
-    }
-
-    elements.turnosGrid.style.display = 'grid';
-    elements.emptyCalendar.style.display = 'none';
-
-    elements.turnosGrid.innerHTML = appState.turnos.map(turno => crearTarjetaTurno(turno)).join('');
-
-    // Agregar event listeners
-    document.querySelectorAll('.turno-card').forEach(card => {
-        card.addEventListener('click', () => {
-            const hora = card.dataset.hora;
-            abrirModalTurno(hora);
-        });
+        appState.turnosPorDia[fechaStr] = turnos;
     });
 }
 
-function crearTarjetaTurno(turno) {
-    const estado = turno.pedidos.length === 0 ? 'disponible' :
-        turno.pedidos.length < turno.cupos ? 'parcial' : 'completo';
+function renderizarCalendario() {
+    const fechas = Object.keys(appState.turnosPorDia).sort();
 
-    return `
-        <div class="turno-card turno-${estado}" data-hora="${turno.hora}">
-            <div class="turno-hora">${turno.horaDisplay}</div>
-            <div class="turno-info">
-                <span class="turno-pedidos">${turno.pedidos.length}/${turno.cupos}</span>
-                <span class="turno-estado">${estado === 'disponible' ? 'Libre' : estado === 'parcial' ? 'Parcial' : 'Completo'}</span>
-            </div>
-            ${turno.pedidos.length > 0 ? `
-                <div class="turno-preview">
-                    ${turno.pedidos.slice(0, 2).map(p => `
-                        <div class="turno-pedido-mini">${p.cliente_nombre}</div>
-                    `).join('')}
-                    ${turno.pedidos.length > 2 ? `<div class="turno-mas">+${turno.pedidos.length - 2} más</div>` : ''}
+    elements.calendarioGrid.innerHTML = fechas.map(fecha => {
+        const turnos = appState.turnosPorDia[fecha];
+        const fechaObj = new Date(fecha + 'T00:00:00');
+        const esHoy = fecha === new Date().toISOString().split('T')[0];
+
+        return `
+            <div class="dia-columna ${esHoy ? 'dia-hoy' : ''}">
+                <div class="dia-header">
+                    <div class="dia-nombre">${fechaObj.toLocaleDateString('es-AR', { weekday: 'short' })}</div>
+                    <div class="dia-numero">${fechaObj.getDate()}</div>
+                    <div class="dia-mes">${fechaObj.toLocaleDateString('es-AR', { month: 'short' })}</div>
+                    ${esHoy ? '<div class="dia-badge">Hoy</div>' : ''}
                 </div>
-            ` : ''}
-        </div>
-    `;
+                <div class="turnos-lista">
+                    ${renderizarTurnosDia(turnos)}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Agregar event listeners
+    document.querySelectorAll('.turno-slot').forEach(slot => {
+        slot.addEventListener('click', () => {
+            const fecha = slot.dataset.fecha;
+            const hora = slot.dataset.hora;
+            const disponible = slot.dataset.disponible === 'true';
+            const ocupado = slot.dataset.ocupado === 'true';
+
+            if (disponible && !ocupado) {
+                // Turno disponible - podría abrir modal para asignar
+                showToast('Turno disponible para asignar', 'info');
+            } else if (ocupado) {
+                // Turno ocupado - mostrar detalles
+                abrirModalTurno(fecha, hora);
+            } else {
+                // Turno no disponible (menos de 4 horas)
+                showToast('Turno no disponible (mínimo 4 horas de anticipación)', 'warning');
+            }
+        });
+    });
+
+    ocultarCargando();
+}
+
+function renderizarTurnosDia(turnos) {
+    // Filtrar solo turnos disponibles o ocupados
+    const turnosMostrar = turnos.filter(t => t.disponible || t.ocupado);
+
+    if (turnosMostrar.length === 0) {
+        return '<div class="sin-turnos">Sin turnos disponibles</div>';
+    }
+
+    return turnosMostrar.map(turno => {
+        let claseEstado = 'disponible';
+        let icono = '✓';
+
+        if (!turno.disponible) {
+            claseEstado = 'no-disponible';
+            icono = '🔒';
+        } else if (turno.ocupado) {
+            claseEstado = 'ocupado';
+            icono = '✕';
+        }
+
+        return `
+            <div class="turno-slot turno-${claseEstado}" 
+                 data-fecha="${turno.fecha}" 
+                 data-hora="${turno.hora}"
+                 data-disponible="${turno.disponible}"
+                 data-ocupado="${turno.ocupado}">
+                <span class="turno-hora-text">${turno.horaDisplay}</span>
+                <span class="turno-icono">${icono}</span>
+                ${turno.ocupado ? `<span class="turno-cliente">${turno.pedido.cliente_nombre.split(' ')[0]}</span>` : ''}
+            </div>
+        `;
+    }).join('');
 }
 
 function actualizarEstadisticas() {
-    const turnosTotales = appState.turnos.length;
-    const turnosOcupados = appState.turnos.filter(t => t.pedidos.length > 0).length;
-    const turnosDisponibles = turnosTotales - turnosOcupados;
-    const pedidosEntregar = appState.pedidos.length;
+    let totalDisponibles = 0;
+    let totalOcupados = 0;
+    let proximoTurno = null;
 
-    elements.statTurnosTotales.textContent = turnosTotales;
-    elements.statTurnosOcupados.textContent = turnosOcupados;
-    elements.statTurnosDisponibles.textContent = turnosDisponibles;
-    elements.statPedidosEntregar.textContent = pedidosEntregar;
+    Object.values(appState.turnosPorDia).forEach(turnos => {
+        turnos.forEach(turno => {
+            if (turno.disponible && !turno.ocupado) {
+                totalDisponibles++;
+                if (!proximoTurno) {
+                    proximoTurno = turno;
+                }
+            }
+            if (turno.ocupado) {
+                totalOcupados++;
+            }
+        });
+    });
+
+    elements.statTurnosDisponibles.textContent = totalDisponibles;
+    elements.statTurnosOcupados.textContent = totalOcupados;
+
+    if (proximoTurno) {
+        const fecha = new Date(proximoTurno.fechaHora);
+        elements.statProximoTurno.textContent = fecha.toLocaleString('es-AR', {
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    } else {
+        elements.statProximoTurno.textContent = 'No disponible';
+    }
 }
 
-function abrirModalTurno(hora) {
-    const turno = appState.turnos.find(t => t.hora === hora);
-    if (!turno) return;
+function actualizarRangoFechas() {
+    const fechas = Object.keys(appState.turnosPorDia).sort();
+    if (fechas.length > 0) {
+        const inicio = new Date(fechas[0] + 'T00:00:00');
+        const fin = new Date(fechas[fechas.length - 1] + 'T00:00:00');
 
-    elements.modalTurnoTitle.textContent = `Turno ${turno.horaDisplay}`;
-
-    if (turno.pedidos.length === 0) {
-        elements.turnoPedidosList.innerHTML = `
-            <div class="empty-turno">
-                <p>No hay pedidos programados para este turno</p>
-                <p class="turno-disponibles">Cupos disponibles: ${turno.disponibles}</p>
-            </div>
-        `;
-    } else {
-        elements.turnoPedidosList.innerHTML = `
-            <div class="turno-pedidos-header">
-                <p><strong>${turno.pedidos.length}</strong> pedido(s) programado(s)</p>
-                <p class="turno-disponibles">Cupos disponibles: ${turno.disponibles}</p>
-            </div>
-            <div class="turno-pedidos-list">
-                ${turno.pedidos.map(pedido => `
-                    <div class="turno-pedido-card">
-                        <div class="pedido-header">
-                            <strong>${pedido.cliente_nombre}</strong>
-                            <span class="badge badge-${pedido.estado_pedido}">${pedido.estado_pedido}</span>
-                        </div>
-                        <div class="pedido-info">
-                            <p>📱 ${pedido.cliente_telefono}</p>
-                            <p>📦 ${pedido.promo_seleccionada}</p>
-                            <p>💰 $${pedido.monto.toLocaleString('es-AR')}</p>
-                        </div>
-                        ${pedido.notas_internas ? `<p class="pedido-notas">📝 ${pedido.notas_internas}</p>` : ''}
-                    </div>
-                `).join('')}
-            </div>
-        `;
+        elements.rangoFechas.textContent = `${inicio.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })} - ${fin.toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: 'numeric' })}`;
     }
+}
+
+function abrirModalTurno(fecha, hora) {
+    const turnos = appState.turnosPorDia[fecha];
+    const turno = turnos.find(t => t.hora === hora);
+
+    if (!turno || !turno.pedido) return;
+
+    const pedido = turno.pedido;
+    const fechaObj = new Date(turno.fechaHora);
+
+    elements.modalTurnoTitle.textContent = `Turno ${fechaObj.toLocaleString('es-AR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        hour: '2-digit',
+        minute: '2-digit'
+    })}`;
+
+    elements.turnoPedidosList.innerHTML = `
+        <div class="turno-pedido-card">
+            <div class="pedido-header">
+                <strong>${pedido.cliente_nombre}</strong>
+                <span class="badge badge-${pedido.estado_pedido}">${pedido.estado_pedido}</span>
+            </div>
+            <div class="pedido-info">
+                <p>📱 ${pedido.cliente_telefono}</p>
+                <p>🆔 DNI: ${pedido.cliente_dni}</p>
+                <p>📦 ${pedido.promo_seleccionada}</p>
+                <p>💰 $${pedido.monto.toLocaleString('es-AR')}</p>
+                <p>💳 Pago: <span class="badge badge-${pedido.estado_pago}">${pedido.estado_pago}</span></p>
+            </div>
+            ${pedido.notas_internas ? `<p class="pedido-notas">📝 ${pedido.notas_internas}</p>` : ''}
+            <div class="pedido-acciones">
+                <a href="https://wa.me/${pedido.cliente_telefono}" target="_blank" class="btn-whatsapp">
+                    💬 WhatsApp
+                </a>
+            </div>
+        </div>
+    `;
 
     elements.modalTurno.classList.add('active');
 }
 
 function cerrarModalTurno() {
     elements.modalTurno.classList.remove('active');
+}
+
+function mostrarCargando() {
+    elements.calendarioGrid.innerHTML = `
+        <div class="loading-calendar">
+            <div class="spinner"></div>
+            <p>Cargando calendario...</p>
+        </div>
+    `;
+}
+
+function ocultarCargando() {
+    // Ya se renderizó el calendario
 }
 
 function showToast(message, type = 'info') {
@@ -276,4 +396,4 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
-console.log('📅 Calendario de Entregas cargado correctamente');
+console.log('📅 Calendario V2 cargado correctamente');
