@@ -7,7 +7,7 @@ const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey
 
 const BUILDERBOT_CONFIG = {
     API_URL: 'https://app.builderbot.cloud/api/v2/c13bbb6b-c2e5-4595-b5eb-7278b6139699/messages',
-    API_KEY: '' // Completar con tu API key
+    API_KEY: 'bb-ce91874a-ee62-40a3-8bc9-0d993145b081'
 };
 
 const CONFIG = {
