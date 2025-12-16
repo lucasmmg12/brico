@@ -142,8 +142,8 @@ function generarTurnos() {
                 horaDisplay: `${horaStr}:${minutoStr}`,
                 pedidos: pedidosTurno,
                 ocupado: pedidosTurno.length > 0,
-                cupos: 3, // Máximo 3 pedidos por turno
-                disponibles: 3 - pedidosTurno.length
+                cupos: 1, // Máximo 1 pedido por turno
+                disponibles: 1 - pedidosTurno.length
             });
         }
     }

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS turnos_config (
     hora_inicio TIME NOT NULL DEFAULT '09:00',
     hora_fin TIME NOT NULL DEFAULT '23:00',
     intervalo_minutos INTEGER NOT NULL DEFAULT 10,
-    max_pedidos_por_turno INTEGER NOT NULL DEFAULT 3,
+    max_pedidos_por_turno INTEGER NOT NULL DEFAULT 1,
     dias_habiles TEXT[] DEFAULT ARRAY['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'],
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(unidad_negocio)
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS turnos_config (
 -- Insertar configuración por defecto
 INSERT INTO turnos_config (unidad_negocio, hora_inicio, hora_fin, intervalo_minutos, max_pedidos_por_turno)
 VALUES 
-    ('Mayorista', '09:00', '23:00', 10, 3),
-    ('Express', '09:00', '23:00', 10, 3)
+    ('Mayorista', '09:00', '23:00', 10, 1),
+    ('Express', '09:00', '23:00', 10, 1)
 ON CONFLICT (unidad_negocio) DO NOTHING;
 
 -- Crear tabla de turnos bloqueados (para feriados, mantenimiento, etc)
