@@ -83,12 +83,13 @@ serve(async (req) => {
         const monto = datosExtraidos.monto || 0;
         const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
 
-        // Obtener URL del comprobante - USAR SOLO urlTempFile
+        // Obtener URL del comprobante - BuilderBot ahora envía solo la URL en 'comprobante'
         console.log('🔍 DEBUG EXPRESS - Buscando comprobante:');
+        console.log('  - body.comprobante:', body.comprobante);
         console.log('  - body.urlTempFile:', body.urlTempFile);
 
-        // Usar SOLO urlTempFile (comprobante contiene el ctx completo, no la URL)
-        const comprobanteUrl = body.urlTempFile || null;
+        // Usar comprobante (ahora solo contiene la URL) o urlTempFile como fallback
+        const comprobanteUrl = body.comprobante || body.urlTempFile || null;
 
         if (comprobanteUrl) {
             console.log('📸 Comprobante detectado:', comprobanteUrl);
