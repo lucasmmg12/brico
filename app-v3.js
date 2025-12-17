@@ -270,6 +270,50 @@ function renderizarPedidos() {
     agregarEventListenersTabla();
 }
 
+function formatearTurno(pedido) {
+    if (!pedido.turno_fecha || !pedido.turno_hora) {
+        return `
+            <div class="turno-info">
+                <span class="turno-badge turno-sin-confirmar">SIN TURNO</span>
+            </div>
+        `;
+    }
+
+    const fechaTurno = new Date(pedido.turno_fecha + 'T' + pedido.turno_hora);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const fechaTurnoSolo = new Date(pedido.turno_fecha);
+    fechaTurnoSolo.setHours(0, 0, 0, 0);
+
+    const esTurnoHoy = fechaTurnoSolo.getTime() === hoy.getTime();
+    const esTurnoManana = fechaTurnoSolo.getTime() === (hoy.getTime() + 86400000);
+
+    const fechaFormateada = fechaTurno.toLocaleDateString('es-AR', {
+        day: '2-digit',
+        month: '2-digit'
+    });
+
+    const horaFormateada = fechaTurno.toLocaleTimeString('es-AR', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    let badgeExtra = '';
+    if (esTurnoHoy) {
+        badgeExtra = '<span class="turno-badge turno-hoy">HOY</span>';
+    } else if (esTurnoManana) {
+        badgeExtra = '<span class="turno-badge turno-manana">MAÑANA</span>';
+    }
+
+    return `
+        <div class="turno-info">
+            <div class="turno-fecha">📅 ${fechaFormateada}</div>
+            <div class="turno-hora">🕐 ${horaFormateada}</div>
+            ${badgeExtra}
+        </div>
+    `;
+}
+
 function crearFilaPedido(pedido) {
     const fechaCreacion = new Date(pedido.created_at).toLocaleString('es-AR', {
         day: '2-digit',
@@ -309,6 +353,9 @@ function crearFilaPedido(pedido) {
             </td>
             <td class="col-promo">
                 <div class="col-promo-text" title="${pedido.promo_seleccionada}">${pedido.promo_seleccionada}</div>
+            </td>
+            <td class="col-turno">
+                ${formatearTurno(pedido)}
             </td>
             <td class="col-monto">${montoFormateado}</td>
             <td class="col-pago">
@@ -380,7 +427,7 @@ function agregarEventListenersTabla() {
 function mostrarCargando() {
     elements.pedidosTbody.innerHTML = `
         <tr>
-            <td colspan="8" style="text-align: center; padding: 2rem;">
+            <td colspan="9" style="text-align: center; padding: 2rem;">
                 <div class="spinner"></div>
                 <p>Cargando pedidos...</p>
             </td>

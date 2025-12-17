@@ -11,7 +11,6 @@ const BUILDERBOT_CONFIG = {
 };
 
 const CONFIG = {
-    HORAS_ANTICIPACION: 4,
     HORA_APERTURA: 9,
     HORA_CIERRE: 23,
     INTERVALO_MINUTOS: 10,
@@ -23,6 +22,7 @@ const appState = {
     nombre: '',
     telefono: '',
     unidadNegocio: 'Mayorista',
+    pedidoId: null,  // NEW: Store the order ID from URL
     diaSeleccionado: null,
     turnoSeleccionado: null,
     horaMinima: null,
@@ -51,6 +51,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const params = new URLSearchParams(window.location.search);
     appState.unidadNegocio = params.get('unidad') || 'Mayorista';
+    appState.pedidoId = params.get('pedido_id');  // NEW: Get order ID from URL
+
+    if (appState.pedidoId) {
+        console.log('📦 Pedido ID detectado:', appState.pedidoId);
+    }
 
     calcularHoraMinima();
     initEventListeners();
@@ -88,9 +93,13 @@ function handleFormSubmit(e) {
 }
 
 function calcularHoraMinima() {
-    const ahora = new Date();
-    const horaMinima = new Date(ahora.getTime() + CONFIG.HORAS_ANTICIPACION * 60 * 60 * 1000);
-    appState.horaMinima = horaMinima;
+    // Los turnos están disponibles desde mañana a las 9 AM
+    const manana = new Date();
+    manana.setDate(manana.getDate() + 1);
+    manana.setHours(CONFIG.HORA_APERTURA, 0, 0, 0);
+    appState.horaMinima = manana;
+
+    console.log('⏰ Turnos disponibles desde:', manana.toLocaleString('es-AR'));
 }
 
 async function cargarDias() {
@@ -277,22 +286,40 @@ async function confirmarTurno() {
     elements.btnConfirmar.textContent = 'Confirmando...';
 
     try {
+        let pedidoId = appState.pedidoId;
+
+        // Si no viene pedido_id en URL, buscar por teléfono
+        if (!pedidoId) {
+            console.log('🔍 Buscando pedido existente por teléfono:', appState.telefono);
+
+            const { data: pedidosExistentes, error: errorBusqueda } = await supabaseClient
+                .from('pedidos')
+                .select('id')
+                .eq('cliente_telefono', appState.telefono)
+                .eq('unidad_negocio', appState.unidadNegocio)
+                .is('turno_confirmado', false)  // Solo pedidos sin turno confirmado
+                .order('created_at', { ascending: false })
+                .limit(1);
+
+            if (errorBusqueda) throw errorBusqueda;
+
+            if (pedidosExistentes && pedidosExistentes.length > 0) {
+                pedidoId = pedidosExistentes[0].id;
+                console.log('✅ Pedido encontrado:', pedidoId);
+            } else {
+                throw new Error('No se encontró un pedido asociado a este teléfono');
+            }
+        }
+
+        // ACTUALIZAR el pedido existente (NO crear uno nuevo)
         const { data, error } = await supabaseClient
             .from('pedidos')
-            .insert([{
-                cliente_nombre: appState.nombre,
-                cliente_telefono: appState.telefono,
-                unidad_negocio: appState.unidadNegocio,
+            .update({
                 turno_fecha: appState.turnoSeleccionado.fecha,
                 turno_hora: appState.turnoSeleccionado.hora,
-                turno_confirmado: true,
-                estado_pedido: 'nuevo',
-                estado_pago: 'pendiente',
-                promo_seleccionada: 'Pedido desde web',
-                monto: 0,
-                cliente_dni: '00000000',
-                notas_internas: 'Turno seleccionado por el cliente desde web'
-            }])
+                turno_confirmado: true
+            })
+            .eq('id', pedidoId)
             .select();
 
         if (error) {
@@ -300,12 +327,17 @@ async function confirmarTurno() {
             throw error;
         }
 
+        if (!data || data.length === 0) {
+            throw new Error('No se pudo actualizar el pedido');
+        }
+
+        console.log('✅ Turno confirmado para pedido:', pedidoId);
         await enviarConfirmacionWhatsApp();
         mostrarExito();
 
     } catch (error) {
         console.error('Error al confirmar turno:', error);
-        showError('Error al confirmar el turno. Por favor intenta nuevamente.');
+        showError(error.message || 'Error al confirmar el turno. Por favor intenta nuevamente.');
         elements.btnConfirmar.disabled = false;
         elements.btnConfirmar.textContent = 'Confirmar Turno';
     }

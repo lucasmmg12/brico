@@ -104,8 +104,9 @@ serve(async (req) => {
 
         console.log('✅ Pedido creado:', pedido[0]);
 
-        // Generar link de selección de turno
-        const linkTurno = `https://brico-dashboard.vercel.app/seleccionar-turno.html?unidad=${datosExtraidos.unidad_negocio || 'Mayorista'}`;
+        // Generar link de selección de turno con pedido_id
+        const pedidoId = pedido[0].id;
+        const linkTurno = `https://brico-dashboard.vercel.app/seleccionar-turno.html?pedido_id=${pedidoId}&unidad=${datosExtraidos.unidad_negocio || 'Mayorista'}`;
 
         // Preparar mensaje para BuilderBot
         const mensaje = `✅ *Pedido Confirmado - Grupo Brico*\n\n` +
@@ -114,7 +115,7 @@ serve(async (req) => {
             `💰 Monto: $${datosExtraidos.monto?.toLocaleString('es-AR') || '0'}\n\n` +
             `📅 *Ahora elegí tu turno de retiro:*\n` +
             `👉 ${linkTurno}\n\n` +
-            `⏰ Turnos disponibles desde +4 horas\n` +
+            `⏰ Turnos disponibles desde mañana\n` +
             `🆔 Recordá traer tu DNI`;
 
         // Devolver respuesta con el mensaje para BuilderBot

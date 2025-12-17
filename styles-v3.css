@@ -130,6 +130,55 @@
     text-overflow: ellipsis;
 }
 
+/* === Columna de Turno === */
+.col-turno {
+    min-width: 140px;
+    max-width: 160px;
+}
+
+.turno-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.85rem;
+}
+
+.turno-fecha,
+.turno-hora {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #555;
+}
+
+.turno-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 4px;
+}
+
+.turno-sin-confirmar {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border: 1px dashed #d1d5db;
+}
+
+.turno-hoy {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fbbf24;
+}
+
+.turno-manana {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #60a5fa;
+}
+
 .col-monto {
     width: 120px;
     text-align: right;
