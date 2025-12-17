@@ -82,15 +82,17 @@ serve(async (req) => {
         const monto = datosExtraidos.monto || 0;
         const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
 
-        // Obtener URL del comprobante si existe - BUSCAR EN MÚLTIPLES UBICACIONES
+        // Obtener URL del comprobante - BUSCAR EN MÚLTIPLES UBICACIONES Y NOMBRES
         console.log('🔍 DEBUG EXPRESS - Estructura completa del body:');
         console.log('  - Keys del body:', Object.keys(body));
+        console.log('  - body.comprobante:', body.comprobante);
         console.log('  - body.urlTempFile:', body.urlTempFile);
         console.log('  - body.ctx?.urlTempFile:', body.ctx?.urlTempFile);
         console.log('  - body.state?.urlTempFile:', body.state?.urlTempFile);
 
-        // Buscar urlTempFile en diferentes ubicaciones posibles
-        const comprobanteUrl = body.urlTempFile ||
+        // Buscar comprobante en diferentes ubicaciones y nombres posibles
+        const comprobanteUrl = body.comprobante ||           // BuilderBot usa 'comprobante'
+            body.urlTempFile ||            // Algunos webhooks usan 'urlTempFile'
             body.ctx?.urlTempFile ||
             body.state?.urlTempFile ||
             null;
