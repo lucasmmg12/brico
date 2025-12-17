@@ -81,6 +81,12 @@ serve(async (req) => {
         const monto = datosExtraidos.monto || 0;
         const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
 
+        // Obtener URL del comprobante si existe
+        const comprobanteUrl = body.urlTempFile || null;
+        if (comprobanteUrl) {
+            console.log('📸 Comprobante detectado:', comprobanteUrl);
+        }
+
         // Crear pedido en Supabase (usar teléfono del webhook, no de OpenAI)
         const { data: pedido, error: errorPedido } = await supabaseClient
             .from('pedidos')
@@ -91,6 +97,7 @@ serve(async (req) => {
                 unidad_negocio: datosExtraidos.unidad_negocio || 'Mayorista',
                 promo_seleccionada: datosExtraidos.promo_seleccionada,
                 monto: monto,
+                comprobante_url: comprobanteUrl, // URL de la imagen del comprobante
                 estado_pago: estadoPago,
                 estado_pedido: 'nuevo',
                 notas_internas: 'Pedido creado automáticamente desde WhatsApp con OpenAI'
