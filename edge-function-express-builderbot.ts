@@ -9,8 +9,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Usar solo variables de entorno (configurar en Supabase Dashboard)
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY') || '';
-const BUILDERBOT_API_URL = Deno.env.get('BUILDERBOT_API_URL') || '';
-const BUILDERBOT_API_KEY = Deno.env.get('BUILDERBOT_API_KEY') || '';
+// EXPRESS usa sus propias credenciales de BuilderBot
+const BUILDERBOT_API_URL = Deno.env.get('BUILDERBOT_EXPRESS_API_URL') || 'https://app.builderbot.cloud/api/v2/6cb13f38-d2e8-4f95-844c-92305f9b464e/messages';
+const BUILDERBOT_API_KEY = Deno.env.get('BUILDERBOT_EXPRESS_API_KEY') || 'bb-cd66a218-334d-438c-a701-ffdb53566edd';
 
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
