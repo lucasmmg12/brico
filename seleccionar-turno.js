@@ -312,6 +312,13 @@ async function confirmarTurno() {
         }
 
         // ACTUALIZAR el pedido existente (NO crear uno nuevo)
+        console.log('📝 Intentando actualizar pedido:', {
+            pedidoId: pedidoId,
+            turno_fecha: appState.turnoSeleccionado.fecha,
+            turno_hora: appState.turnoSeleccionado.hora,
+            turno_confirmado: true
+        });
+
         const { data, error } = await supabaseClient
             .from('pedidos')
             .update({
@@ -322,16 +329,20 @@ async function confirmarTurno() {
             .eq('id', pedidoId)
             .select();
 
+        console.log('📊 Resultado de actualización:', { data, error });
+
         if (error) {
-            console.error('Error Supabase:', error);
+            console.error('❌ Error Supabase:', error);
             throw error;
         }
 
         if (!data || data.length === 0) {
+            console.error('⚠️ No se encontró el pedido para actualizar. ID:', pedidoId);
             throw new Error('No se pudo actualizar el pedido');
         }
 
         console.log('✅ Turno confirmado para pedido:', pedidoId);
+        console.log('✅ Datos actualizados:', data[0]);
         await enviarConfirmacionWhatsApp();
         mostrarExito();
 
