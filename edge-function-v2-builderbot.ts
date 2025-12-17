@@ -81,26 +81,17 @@ serve(async (req) => {
         const monto = datosExtraidos.monto || 0;
         const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
 
-        // Obtener URL del comprobante - BUSCAR EN MÚLTIPLES UBICACIONES Y NOMBRES
-        console.log('🔍 DEBUG - Estructura completa del body:');
-        console.log('  - Keys del body:', Object.keys(body));
-        console.log('  - body.comprobante:', body.comprobante);
+        // Obtener URL del comprobante - USAR SOLO urlTempFile
+        console.log('🔍 DEBUG - Buscando comprobante:');
         console.log('  - body.urlTempFile:', body.urlTempFile);
-        console.log('  - body.ctx?.urlTempFile:', body.ctx?.urlTempFile);
-        console.log('  - body.state?.urlTempFile:', body.state?.urlTempFile);
 
-        // Buscar comprobante en diferentes ubicaciones y nombres posibles
-        const comprobanteUrl = body.comprobante ||           // BuilderBot usa 'comprobante'
-            body.urlTempFile ||            // Algunos webhooks usan 'urlTempFile'
-            body.ctx?.urlTempFile ||
-            body.state?.urlTempFile ||
-            null;
+        // Usar SOLO urlTempFile (comprobante contiene el ctx completo, no la URL)
+        const comprobanteUrl = body.urlTempFile || null;
 
         if (comprobanteUrl) {
             console.log('📸 Comprobante detectado:', comprobanteUrl);
         } else {
             console.log('⚠️ No se detectó comprobante en el webhook');
-            console.log('   Verificar estructura del body en logs anteriores');
         }
 
         // Crear pedido en Supabase (usar teléfono del webhook, no de OpenAI)
