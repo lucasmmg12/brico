@@ -82,9 +82,18 @@ serve(async (req) => {
         const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
 
         // Obtener URL del comprobante si existe
+        console.log('🔍 Verificando urlTempFile en body:', {
+            existe: !!body.urlTempFile,
+            valor: body.urlTempFile,
+            tipoBody: typeof body,
+            keysBody: Object.keys(body)
+        });
+
         const comprobanteUrl = body.urlTempFile || null;
         if (comprobanteUrl) {
             console.log('📸 Comprobante detectado:', comprobanteUrl);
+        } else {
+            console.log('⚠️ No se detectó comprobante en el webhook');
         }
 
         // Crear pedido en Supabase (usar teléfono del webhook, no de OpenAI)
