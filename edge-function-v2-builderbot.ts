@@ -108,7 +108,7 @@ serve(async (req) => {
         const pedidoId = pedido[0].id;
         const linkTurno = `https://brico-dashboard.vercel.app/seleccionar-turno.html?pedido_id=${pedidoId}&unidad=${datosExtraidos.unidad_negocio || 'Mayorista'}`;
 
-        // Preparar mensaje para BuilderBot
+        // Preparar mensaje para el cliente
         const mensaje = `✅ *Pedido Confirmado - Grupo Brico*\n\n` +
             `Hola ${datosExtraidos.cliente_nombre}! 👋\n\n` +
             `Tu pedido de *${datosExtraidos.promo_seleccionada}* ha sido confirmado.\n` +
@@ -118,14 +118,24 @@ serve(async (req) => {
             `⏰ Turnos disponibles desde mañana\n` +
             `🆔 Recordá traer tu DNI`;
 
-        // Devolver respuesta con el mensaje para BuilderBot
+        // Enviar mensaje directamente al cliente vía BuilderBot
+        try {
+            await enviarMensajeBuilderBot(body.cliente_telefono, mensaje);
+            console.log('✅ Mensaje enviado al cliente');
+        } catch (errorMensaje) {
+            console.error('⚠️ No se pudo enviar el mensaje, pero el pedido fue creado:', errorMensaje);
+            // No lanzamos error para que el pedido se guarde igual
+        }
+
+        // Devolver respuesta exitosa
         return new Response(
             JSON.stringify({
                 success: true,
-                message: mensaje,  // BuilderBot enviará este mensaje automáticamente
+                message: 'Pedido creado y mensaje enviado',
                 pedido: pedido[0],
                 datosExtraidos,
-                linkTurno
+                linkTurno,
+                mensajeEnviado: true
             }),
             { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -141,6 +151,40 @@ serve(async (req) => {
         );
     }
 });
+
+async function enviarMensajeBuilderBot(telefono: string, mensaje: string) {
+    try {
+        console.log('📤 Enviando mensaje a:', telefono);
+
+        const response = await fetch(BUILDERBOT_API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-builderbot': BUILDERBOT_API_KEY
+            },
+            body: JSON.stringify({
+                messages: {
+                    content: mensaje
+                },
+                number: telefono,
+                checkIfExists: false
+            })
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Error al enviar mensaje BuilderBot:', errorText);
+            throw new Error(`Error BuilderBot: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('✅ Mensaje enviado correctamente:', data);
+        return data;
+    } catch (error) {
+        console.error('❌ Error al enviar mensaje:', error);
+        throw error;
+    }
+}
 
 async function extraerDatosConOpenAI(historial: string, telefonoCliente: string) {
     const prompt = `Actúa como un motor de extracción de datos JSON. Tu única tarea es analizar el historial de chat de WhatsApp proporcionado y extraer la información estructurada del cliente y su pedido.
