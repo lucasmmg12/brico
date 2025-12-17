@@ -82,19 +82,24 @@ serve(async (req) => {
         const monto = datosExtraidos.monto || 0;
         const estadoPago = monto > 0 ? 'pagado' : 'pendiente';
 
-        // Obtener URL del comprobante si existe
-        console.log('🔍 Verificando urlTempFile en body (EXPRESS):', {
-            existe: !!body.urlTempFile,
-            valor: body.urlTempFile,
-            tipoBody: typeof body,
-            keysBody: Object.keys(body)
-        });
+        // Obtener URL del comprobante si existe - BUSCAR EN MÚLTIPLES UBICACIONES
+        console.log('🔍 DEBUG EXPRESS - Estructura completa del body:');
+        console.log('  - Keys del body:', Object.keys(body));
+        console.log('  - body.urlTempFile:', body.urlTempFile);
+        console.log('  - body.ctx?.urlTempFile:', body.ctx?.urlTempFile);
+        console.log('  - body.state?.urlTempFile:', body.state?.urlTempFile);
 
-        const comprobanteUrl = body.urlTempFile || null;
+        // Buscar urlTempFile en diferentes ubicaciones posibles
+        const comprobanteUrl = body.urlTempFile ||
+            body.ctx?.urlTempFile ||
+            body.state?.urlTempFile ||
+            null;
+
         if (comprobanteUrl) {
             console.log('📸 Comprobante detectado:', comprobanteUrl);
         } else {
             console.log('⚠️ No se detectó comprobante en el webhook');
+            console.log('   Verificar estructura del body en logs anteriores');
         }
 
         // Crear pedido en Supabase - SIEMPRE COMO EXPRESS
