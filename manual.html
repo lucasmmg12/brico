@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Uso - Sistema Brico</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles-v3.css">
+    <link rel="stylesheet" href="styles-logo.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .manual-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .manual-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 3px solid #FF6700;
+        }
+
+        .manual-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .manual-subtitle {
+            font-size: 1.125rem;
+            color: #718096;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #FF6700;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #FFE8CC;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .content-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .diagram-container {
+            background: #f7fafc;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 2px solid #e2e8f0;
+        }
+
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .flow-step {
+            background: white;
+            border: 2px solid #FF6700;
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .flow-step-number {
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: #FF6700;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+
+        .flow-step-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .flow-step-desc {
+            color: #718096;
+            font-size: 0.9375rem;
+        }
+
+        .flow-arrow {
+            color: #FF6700;
+            font-size: 2rem;
+            margin: 0.5rem 0;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFE8CC 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid #FF6700;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-desc {
+            color: #718096;
+            font-size: 0.9375rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tech-badge {
+            background: #FF6700;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .architecture-diagram {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .arch-layer {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid #FF6700;
+        }
+
+        .arch-layer-title {
+            font-weight: 700;
+            color: #FF6700;
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .arch-components {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .arch-component {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: #4a5568;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .highlight {
+            background: #FFF5E6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            color: #FF6700;
+            font-weight: 600;
+        }
+
+        .warning-box {
+            background: #FFF5E6;
+            border-left: 4px solid #F39C12;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .warning-title {
+            font-weight: 700;
+            color: #F39C12;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-box {
+            background: #E8F8F5;
+            border-left: 4px solid #28B463;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .success-title {
+            font-weight: 700;
+            color: #28B463;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #FF6700;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .btn-back:hover {
+            background: #E65A00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 103, 0, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .manual-container {
+                padding: 1rem;
+            }
+
+            .manual-title {
+                font-size: 1.75rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="modern-body">
+    <div class="manual-container">
+        <a href="index.html" class="btn-back">
+            <span>←</span>
+            Volver al Dashboard
+        </a>
+
+        <div class="manual-header">
+            <img src="public/logobrico.png" alt="Brico Logo" style="height: 60px; margin-bottom: 1rem;">
+            <h1 class="manual-title">Manual de Uso del Sistema</h1>
+            <p class="manual-subtitle">Guía completa de funcionalidades y arquitectura</p>
+        </div>
+
+        <!-- SECCIÓN 1: INTRODUCCIÓN -->
+        <section class="section">
+            <h2 class="section-title">📖 1. Introducción</h2>
+            <p class="content-text">
+                El Sistema Brico es una plataforma integral de gestión de pedidos que automatiza el proceso completo
+                desde la recepción del pedido por WhatsApp hasta la entrega final. El sistema utiliza inteligencia
+                artificial para extraer información de las conversaciones y gestiona automáticamente los turnos de
+                retiro.
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">Automatización con IA</div>
+                    <div class="feature-desc">OpenAI extrae automáticamente datos de las conversaciones de WhatsApp
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <div class="feature-title">Gestión de Turnos</div>
+                    <div class="feature-desc">Sistema inteligente de turnos con disponibilidad en tiempo real</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Dashboard en Tiempo Real</div>
+                    <div class="feature-desc">Visualización completa de pedidos, turnos y comprobantes</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏪</div>
+                    <div class="feature-title">Multi-Sucursal</div>
+                    <div class="feature-desc">Soporte para Mayorista y Express con webhooks independientes</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: ARQUITECTURA DEL SISTEMA -->
+        <section class="section">
+            <h2 class="section-title">🏗️ 2. Arquitectura del Sistema</h2>
+
+            <h3 class="section-subtitle">Stack Tecnológico</h3>
+            <div class="tech-stack">
+                <span class="tech-badge">WhatsApp Business</span>
+                <span class="tech-badge">BuilderBot</span>
+                <span class="tech-badge">Supabase Edge Functions</span>
+                <span class="tech-badge">OpenAI GPT-4</span>
+                <span class="tech-badge">PostgreSQL</span>
+                <span class="tech-badge">Vercel</span>
+                <span class="tech-badge">JavaScript</span>
+                <span class="tech-badge">TypeScript</span>
+            </div>
+
+            <h3 class="section-subtitle">Capas de la Arquitectura</h3>
+            <div class="architecture-diagram">
+                <div class="arch-layer">
+                    <div class="arch-layer-title">📱 Capa de Comunicación</div>
+                    <div class="arch-components">
+                        <span class="arch-component">WhatsApp Business</span>
+                        <span class="arch-component">BuilderBot API</span>
+                        <span class="arch-component">Webhooks</span>
+                    </div>
+                </div>
+
+                <div class="arch-layer">
+                    <div class="arch-layer-title">🧠 Capa de Procesamiento</div>
+                    <div class="arch-components">
+                        <span class="arch-component">Supabase Edge Functions</span>
+                        <span class="arch-component">OpenAI API</span>
+                        <span class="arch-component">Extracción de Datos</span>
+                    </div>
+                </div>
+
+                <div class="arch-layer">
+                    <div class="arch-layer-title">💾 Capa de Datos</div>
+                    <div class="arch-components">
+                        <span class="arch-component">Supabase PostgreSQL</span>
+                        <span class="arch-component">Tabla: pedidos</span>
+                        <span class="arch-component">Tabla: turnos_config</span>
+                        <span class="arch-component">Tabla: turnos_bloqueados</span>
+                    </div>
+                </div>
+
+                <div class="arch-layer">
+                    <div class="arch-layer-title">🖥️ Capa de Presentación</div>
+                    <div class="arch-components">
+                        <span class="arch-component">Dashboard Web</span>
+                        <span class="arch-component">Selección de Turnos</span>
+                        <span class="arch-component">Vercel Hosting</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: FLUJO COMPLETO -->
+        <section class="section">
+            <h2 class="section-title">🔄 3. Flujo Completo del Sistema</h2>
+
+            <div class="diagram-container">
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-step-number">1</div>
+                        <div class="flow-step-title">📱 Cliente contacta por WhatsApp</div>
+                        <div class="flow-step-desc">
+                            El cliente inicia una conversación con el agente de ventas a través de WhatsApp Business.
+                            Proporciona información sobre el pedido: nombre, DNI, producto deseado y monto.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">2</div>
+                        <div class="flow-step-title">📸 Cliente envía comprobante (opcional)</div>
+                        <div class="flow-step-desc">
+                            Si el cliente realizó un pago, envía la imagen del comprobante por WhatsApp.
+                            BuilderBot captura la URL de la imagen automáticamente.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">3</div>
+                        <div class="flow-step-title">🔗 BuilderBot envía webhook</div>
+                        <div class="flow-step-desc">
+                            BuilderBot detecta que la conversación está completa y envía un webhook a Supabase
+                            con el historial completo de la conversación y la URL del comprobante (si existe).
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">4</div>
+                        <div class="flow-step-title">⚡ Supabase Edge Function procesa</div>
+                        <div class="flow-step-desc">
+                            La Edge Function recibe el webhook y procesa el historial de chat.
+                            Determina automáticamente si es Mayorista o Express según el webhook recibido.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">5</div>
+                        <div class="flow-step-title">🤖 OpenAI extrae datos</div>
+                        <div class="flow-step-desc">
+                            La Edge Function envía el historial a OpenAI GPT-4, que extrae automáticamente:
+                            nombre del cliente, DNI, teléfono, producto/promo seleccionada y monto.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">6</div>
+                        <div class="flow-step-title">💾 Se crea el pedido en la base de datos</div>
+                        <div class="flow-step-desc">
+                            Con los datos extraídos, se crea un nuevo registro en la tabla 'pedidos' de Supabase.
+                            Se guarda: cliente, producto, monto, comprobante_url, estado_pago y unidad_negocio.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">7</div>
+                        <div class="flow-step-title">📲 Cliente recibe link de turnos</div>
+                        <div class="flow-step-desc">
+                            La Edge Function envía automáticamente un mensaje de WhatsApp al cliente con un link
+                            personalizado para seleccionar su turno de retiro. El link incluye el ID del pedido.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">8</div>
+                        <div class="flow-step-title">📅 Cliente elige turno</div>
+                        <div class="flow-step-desc">
+                            El cliente accede al link y ve los turnos disponibles desde mañana.
+                            Puede elegir día y hora según disponibilidad (2 clientes por turno).
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">9</div>
+                        <div class="flow-step-title">✅ Sistema confirma turno</div>
+                        <div class="flow-step-desc">
+                            El sistema actualiza el pedido con la fecha y hora seleccionada.
+                            Envía confirmación automática por WhatsApp al cliente.
+                        </div>
+                    </div>
+
+                    <div class="flow-arrow">↓</div>
+
+                    <div class="flow-step">
+                        <div class="flow-step-number">10</div>
+                        <div class="flow-step-title">🎯 Día del retiro</div>
+                        <div class="flow-step-desc">
+                            El cliente llega en su turno. El personal marca el pedido como "Listo" en el dashboard.
+                            El cliente retira su pedido y el proceso se completa.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 4: COMUNICACIÓN WHATSAPP - SUPABASE -->
+        <section class="section">
+            <h2 class="section-title">🔌 4. Comunicación WhatsApp ↔ Supabase</h2>
+
+            <h3 class="section-subtitle">Webhooks Configurados</h3>
+            <p class="content-text">
+                El sistema utiliza dos webhooks independientes, uno para cada sucursal:
+            </p>
+
+            <div class="code-block">
+                <strong>Webhook Mayorista:</strong>
+                URL: https://fhfacchqwvzpkmxlleri.supabase.co/functions/v1/crear-pedido-whatsapp
+                Bot ID: c13bbb6b-c2e5-4595-b5eb-7278b6139699
+
+                <strong>Webhook Express:</strong>
+                URL: https://fhfacchqwvzpkmxlleri.supabase.co/functions/v1/crear-pedido-express
+                Bot ID: 6cb13f38-d2e8-4f95-844c-92305f9b464e
+            </div>
+
+            <h3 class="section-subtitle">Estructura del Webhook</h3>
+            <p class="content-text">
+                Cuando BuilderBot envía el webhook, incluye la siguiente información:
+            </p>
+
+            <div class="code-block">
+                {
+                "historial": [
+                {"role": "user", "content": "Hola, quiero hacer un pedido"},
+                {"role": "assistant", "content": "¡Hola! ¿Cuál es tu nombre?"},
+                {"role": "user", "content": "Lucas Marinero"},
+                ...
+                ],
+                "cliente_telefono": "5492645438114",
+                "comprobante": "https://runtime-sessions.s3.us-west-1.amazonaws.com/..."
+                }
+            </div>
+
+            <div class="success-box">
+                <div class="success-title">✅ Datos Capturados Automáticamente</div>
+                <ul style="margin: 0.5rem 0 0 1.5rem; color: #4a5568;">
+                    <li><strong>Historial completo:</strong> Toda la conversación entre cliente y agente</li>
+                    <li><strong>Teléfono del cliente:</strong> Número de WhatsApp</li>
+                    <li><strong>URL del comprobante:</strong> Link directo a la imagen del comprobante</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 5: FUNCIONALIDADES DEL DASHBOARD -->
+        <section class="section">
+            <h2 class="section-title">📊 5. Funcionalidades del Dashboard</h2>
+
+            <h3 class="section-subtitle">Visualización de Pedidos</h3>
+            <p class="content-text">
+                El dashboard muestra todos los pedidos en tiempo real con la siguiente información:
+            </p>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">👤</div>
+                    <div class="feature-title">Datos del Cliente</div>
+                    <div class="feature-desc">Nombre, teléfono y DNI del cliente</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <div class="feature-title">Información del Pedido</div>
+                    <div class="feature-desc">Producto/promo seleccionada y monto</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <div class="feature-title">Turno Asignado</div>
+                    <div class="feature-desc">Fecha y hora con badges HOY/MAÑANA</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <div class="feature-title">Estado de Pago</div>
+                    <div class="feature-desc">Pagado/Pendiente con indicador visual</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <div class="feature-title">Comprobante</div>
+                    <div class="feature-desc">Botón para ver imagen del comprobante</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏪</div>
+                    <div class="feature-title">Sucursal</div>
+                    <div class="feature-desc">Mayorista o Express</div>
+                </div>
+            </div>
+
+            <h3 class="section-subtitle">Filtros y Controles</h3>
+            <ul class="content-text" style="margin-left: 2rem;">
+                <li><strong>Filtro por Sucursal:</strong> Tabs para ver solo Mayorista o Express</li>
+                <li><strong>Filtro por Pago:</strong> Ver todos, solo pagados o solo pendientes</li>
+                <li><strong>Filtro por Estado:</strong> Nuevos, armados o listos</li>
+                <li><strong>Filtro por Fecha:</strong> Ver pedidos de fechas específicas</li>
+                <li><strong>Actualizar:</strong> Botón para refrescar los datos</li>
+            </ul>
+
+            <h3 class="section-subtitle">Exportación de Datos</h3>
+            <p class="content-text">
+                El dashboard permite exportar los pedidos en dos formatos:
+            </p>
+            <ul class="content-text" style="margin-left: 2rem;">
+                <li><strong>Excel (.xlsx):</strong> Para análisis y reportes</li>
+                <li><strong>PDF:</strong> Para impresión y archivo</li>
+            </ul>
+        </section>
+
+        <!-- SECCIÓN 6: GESTIÓN DE TURNOS -->
+        <section class="section">
+            <h2 class="section-title">⏰ 6. Sistema de Gestión de Turnos</h2>
+
+            <h3 class="section-subtitle">Configuración de Turnos</h3>
+            <div class="code-block">
+                <strong>Horario de atención:</strong> 8:00 AM - 6:00 PM
+                <strong>Intervalo:</strong> 30 minutos
+                <strong>Capacidad:</strong> 2 clientes por turno
+                <strong>Disponibilidad:</strong> Desde el día siguiente
+            </div>
+
+            <h3 class="section-subtitle">Proceso de Selección</h3>
+            <ol class="content-text" style="margin-left: 2rem;">
+                <li>Cliente recibe link personalizado con su <span class="highlight">pedido_id</span></li>
+                <li>Accede a la página de selección de turnos</li>
+                <li>Ve calendario con días disponibles</li>
+                <li>Selecciona un día y ve horarios disponibles</li>
+                <li>Elige un horario y confirma</li>
+                <li>Sistema actualiza el pedido con fecha y hora</li>
+                <li>Cliente recibe confirmación por WhatsApp</li>
+            </ol>
+
+            <div class="warning-box">
+                <div class="warning-title">⚠️ Importante</div>
+                <p style="margin: 0; color: #4a5568;">
+                    El sistema NO crea un pedido nuevo al seleccionar turno. Actualiza el pedido existente
+                    creado por el webhook. Esto evita duplicados y mantiene la integridad de los datos.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 7: MANTENIMIENTO -->
+        <section class="section">
+            <h2 class="section-title">🔧 7. Mantenimiento y Troubleshooting</h2>
+
+            <h3 class="section-subtitle">Verificar Estado del Sistema</h3>
+            <p class="content-text">Para verificar que todo funciona correctamente:</p>
+
+            <ol class="content-text" style="margin-left: 2rem;">
+                <li><strong>Dashboard:</strong> Acceder a https://brico-dashboard.vercel.app</li>
+                <li><strong>Logs de Supabase:</strong> Revisar logs de Edge Functions en Supabase Dashboard</li>
+                <li><strong>Base de datos:</strong> Verificar que los pedidos se crean correctamente</li>
+                <li><strong>BuilderBot:</strong> Confirmar que los webhooks están activos</li>
+            </ol>
+
+            <h3 class="section-subtitle">Problemas Comunes</h3>
+
+            <div class="warning-box">
+                <div class="warning-title">🔴 Pedido no se crea</div>
+                <ul style="margin: 0.5rem 0 0 1.5rem; color: #4a5568;">
+                    <li>Verificar que el webhook esté configurado en BuilderBot</li>
+                    <li>Revisar logs de Supabase Edge Function</li>
+                    <li>Confirmar que OpenAI API Key es válida</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-title">🔴 Comprobante no aparece</div>
+                <ul style="margin: 0.5rem 0 0 1.5rem; color: #4a5568;">
+                    <li>Verificar que BuilderBot envía el campo 'comprobante'</li>
+                    <li>Revisar logs: debe aparecer "📸 Comprobante detectado"</li>
+                    <li>Confirmar que la URL es válida y accesible</li>
+                </ul>
+            </div>
+
+            <div class="warning-box">
+                <div class="warning-title">🔴 Turno no se guarda</div>
+                <ul style="margin: 0.5rem 0 0 1.5rem; color: #4a5568;">
+                    <li>Verificar que el link incluye pedido_id correcto</li>
+                    <li>Revisar consola del navegador (F12) al seleccionar turno</li>
+                    <li>Confirmar que el pedido existe en la base de datos</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 8: SEGURIDAD -->
+        <section class="section">
+            <h2 class="section-title">🔒 8. Seguridad y Mejores Prácticas</h2>
+
+            <div class="success-box">
+                <div class="success-title">✅ Medidas de Seguridad Implementadas</div>
+                <ul style="margin: 0.5rem 0 0 1.5rem; color: #4a5568;">
+                    <li><strong>Variables de entorno:</strong> API keys almacenadas en Supabase Secrets</li>
+                    <li><strong>HTTPS:</strong> Todas las comunicaciones encriptadas</li>
+                    <li><strong>Validación de datos:</strong> OpenAI valida formato de datos extraídos</li>
+                    <li><strong>RLS (Row Level Security):</strong> Políticas de seguridad en Supabase</li>
+                    <li><strong>No exponer credenciales:</strong> Nunca commitear API keys a Git</li>
+                </ul>
+            </div>
+
+            <h3 class="section-subtitle">Credenciales Importantes</h3>
+            <p class="content-text">
+                Las siguientes credenciales están configuradas como variables de entorno en Supabase:
+            </p>
+            <ul class="content-text" style="margin-left: 2rem;">
+                <li><span class="highlight">OPENAI_API_KEY</span> - Para extracción de datos con IA</li>
+                <li><span class="highlight">BUILDERBOT_API_KEY</span> - Para enviar mensajes (Mayorista)</li>
+                <li><span class="highlight">BUILDERBOT_EXPRESS_API_KEY</span> - Para enviar mensajes (Express)</li>
+                <li><span class="highlight">SUPABASE_URL</span> - URL de la base de datos</li>
+                <li><span class="highlight">SUPABASE_ANON_KEY</span> - Key pública de Supabase</li>
+            </ul>
+        </section>
+
+        <!-- FOOTER -->
+        <div style="text-align: center; margin-top: 4rem; padding-top: 2rem; border-top: 2px solid #e2e8f0;">
+            <p style="color: #718096; margin-bottom: 0.5rem;">
+                Sistema Brico - Dashboard de Gestión de Pedidos
+            </p>
+            <p style="color: #a0aec0; font-size: 0.875rem;">
+                Última actualización: Diciembre 2025
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>
