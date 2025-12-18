@@ -1,0 +1,32 @@
+/* === LOGO IMAGE === */
+.logo-image-modern {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+/* === BACKGROUND LOGO === */
+body::before {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60%;
+    height: 60%;
+    background-image: url('public/logobrico.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    opacity: 0.03;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Asegurar que el contenido esté por encima del fondo */
+.header-modern,
+.main-container-modern,
+.footer-brico-modern {
+    position: relative;
+    z-index: 1;
+}

@@ -94,7 +94,7 @@
 .col-fecha {
     width: 130px;
     font-size: 0.75rem;
-    color: var(--color-gray-600);
+    color: var(--color-primary);
 }
 
 .col-cliente {
@@ -109,7 +109,7 @@
 
 .col-cliente-dni {
     font-size: 0.75rem;
-    color: var(--color-gray-600);
+    color: var(--color-primary);
 }
 
 .col-telefono {
@@ -446,7 +446,7 @@
 
 .stat-card-label {
     font-size: 0.875rem;
-    color: var(--color-gray-600);
+    color: var(--color-primary);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
