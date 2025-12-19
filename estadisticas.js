@@ -1,5 +1,6 @@
 // ============================================
 // GRUPO BRICO - Página de Estadísticas
+// Conectado con Supabase (Datos Reales)
 // ============================================
 
 function getToday() {
@@ -7,139 +8,11 @@ function getToday() {
     return today.toISOString().split('T')[0];
 }
 
-// Importar datos desde localStorage o usar mock
-const PEDIDOS_MOCK = [
-    {
-        id: '1',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Juan Pérez',
-        cliente_dni: '12345678',
-        cliente_telefono: '1123456789',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 1 - Almacén Completo',
-        monto: 15000.00,
-        estado_pago: 'pendiente',
-        estado_pedido: 'nuevo',
-        fecha_entrega: getToday()
-    },
-    {
-        id: '2',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'María González',
-        cliente_dni: '87654321',
-        cliente_telefono: '1198765432',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 2 - Bebidas y Snacks',
-        monto: 8500.50,
-        estado_pago: 'pagado',
-        estado_pedido: 'armado',
-        fecha_entrega: getToday()
-    },
-    {
-        id: '3',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-        cliente_nombre: 'Carlos Rodríguez',
-        cliente_dni: '11223344',
-        cliente_telefono: '1155443322',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 4 - Carnes Premium',
-        monto: 25000.00,
-        estado_pago: 'pagado',
-        estado_pedido: 'entregado',
-        fecha_entrega: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0]
-    },
-    {
-        id: '4',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Ana Martínez',
-        cliente_dni: '44332211',
-        cliente_telefono: '1144556677',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 3 - Limpieza y Hogar',
-        monto: 6200.00,
-        estado_pago: 'pagado',
-        estado_pedido: 'nuevo',
-        fecha_entrega: getToday()
-    },
-    {
-        id: '5',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-        cliente_nombre: 'Luis Fernández',
-        cliente_dni: '55667788',
-        cliente_telefono: '1177889900',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 5 - Verduras y Frutas',
-        monto: 12000.00,
-        estado_pago: 'rechazado',
-        estado_pedido: 'no_vino',
-        fecha_entrega: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0]
-    },
-    {
-        id: '6',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Patricia Silva',
-        cliente_dni: '99887766',
-        cliente_telefono: '1166778899',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 6 - Desayuno Completo',
-        monto: 4500.00,
-        estado_pago: 'pagado',
-        estado_pedido: 'entregado',
-        fecha_entrega: getToday()
-    },
-    {
-        id: '7',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Roberto Gómez',
-        cliente_dni: '22334455',
-        cliente_telefono: '1133224455',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 7 - Panadería y Fiambrería',
-        monto: 18500.00,
-        estado_pago: 'pendiente',
-        estado_pedido: 'nuevo',
-        fecha_entrega: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().split('T')[0]
-    },
-    {
-        id: '8',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 12).toISOString(),
-        cliente_nombre: 'Sofía Ramírez',
-        cliente_dni: '66778899',
-        cliente_telefono: '1155667788',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 8 - Congelados',
-        monto: 7800.00,
-        estado_pago: 'pagado',
-        estado_pedido: 'armado',
-        fecha_entrega: getToday()
-    },
-    {
-        id: '9',
-        created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-        cliente_nombre: 'Diego Torres',
-        cliente_dni: '33445566',
-        cliente_telefono: '1199887766',
-        unidad_negocio: 'Mayorista',
-        promo_seleccionada: 'Promo 9 - Bebidas Alcohólicas',
-        monto: 32000.00,
-        estado_pago: 'pagado',
-        estado_pedido: 'entregado',
-        fecha_entrega: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString().split('T')[0]
-    },
-    {
-        id: '10',
-        created_at: new Date().toISOString(),
-        cliente_nombre: 'Valentina López',
-        cliente_dni: '77889900',
-        cliente_telefono: '1122334455',
-        unidad_negocio: 'Express',
-        promo_seleccionada: 'Promo 10 - Mascotas',
-        monto: 5600.00,
-        estado_pago: 'pendiente',
-        estado_pedido: 'nuevo',
-        fecha_entrega: getToday()
-    }
-];
+// === Inicializar Supabase ===
+const { createClient } = supabase;
+const supabaseClient = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+
+console.log('✅ Supabase inicializado:', SUPABASE_CONFIG.url);
 
 const appState = {
     unidadActual: 'Mayorista',
@@ -147,7 +20,7 @@ const appState = {
 };
 
 const elements = {
-    tabs: document.querySelectorAll('.tab'),
+    tabs: document.querySelectorAll('.tab-modern'),
     statsUnidad: document.getElementById('stats-unidad'),
     statPedidosTomados: document.getElementById('stat-pedidos-tomados'),
     statPedidosEntregados: document.getElementById('stat-pedidos-entregados'),
@@ -184,9 +57,57 @@ function cambiarUnidad(unidad) {
     cargarEstadisticas();
 }
 
-function cargarEstadisticas() {
-    appState.pedidos = PEDIDOS_MOCK.filter(p => p.unidad_negocio === appState.unidadActual);
-    actualizarEstadisticas();
+async function cargarEstadisticas() {
+    try {
+        console.log(`📊 Cargando estadísticas para ${appState.unidadActual}...`);
+
+        // Mostrar loading en las métricas
+        mostrarLoading();
+
+        // Cargar pedidos desde Supabase
+        const { data, error } = await supabaseClient
+            .from('pedidos')
+            .select('*')
+            .eq('unidad_negocio', appState.unidadActual)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('❌ Error al cargar pedidos:', error);
+            throw error;
+        }
+
+        appState.pedidos = data || [];
+        console.log(`✅ Cargados ${appState.pedidos.length} pedidos para ${appState.unidadActual}`);
+
+        actualizarEstadisticas();
+
+        // Actualizar gráficos si existe la función
+        if (typeof actualizarGraficos === 'function') {
+            actualizarGraficos();
+        }
+    } catch (error) {
+        console.error('❌ Error al cargar estadísticas:', error);
+        mostrarError();
+    }
+}
+
+function mostrarLoading() {
+    elements.statPedidosTomados.innerHTML = '<div class="spinner-small"></div>';
+    elements.statPedidosEntregados.innerHTML = '<div class="spinner-small"></div>';
+    elements.statImporteFacturado.innerHTML = '<div class="spinner-small"></div>';
+    elements.statPedidosHoy.innerHTML = '<div class="spinner-small"></div>';
+    elements.statEntregasHoy.innerHTML = '<div class="spinner-small"></div>';
+    elements.statPendientesPago.innerHTML = '<div class="spinner-small"></div>';
+}
+
+function mostrarError() {
+    const errorText = 'Error';
+    elements.statPedidosTomados.textContent = errorText;
+    elements.statPedidosEntregados.textContent = errorText;
+    elements.statImporteFacturado.textContent = errorText;
+    elements.statPedidosHoy.textContent = errorText;
+    elements.statEntregasHoy.textContent = errorText;
+    elements.statPendientesPago.textContent = errorText;
 }
 
 function actualizarEstadisticas() {
@@ -202,7 +123,7 @@ function actualizarEstadisticas() {
     // Importe facturado (solo pedidos pagados)
     const facturado = appState.pedidos
         .filter(p => p.estado_pago === 'pagado')
-        .reduce((sum, p) => sum + parseFloat(p.monto), 0);
+        .reduce((sum, p) => sum + parseFloat(p.monto || 0), 0);
 
     elements.statImporteFacturado.textContent = new Intl.NumberFormat('es-AR', {
         style: 'currency',
@@ -213,7 +134,7 @@ function actualizarEstadisticas() {
 
     // Pedidos de hoy
     const today = getToday();
-    const pedidosHoy = appState.pedidos.filter(p => p.created_at.startsWith(today)).length;
+    const pedidosHoy = appState.pedidos.filter(p => p.created_at && p.created_at.startsWith(today)).length;
     elements.statPedidosHoy.textContent = pedidosHoy;
 
     // Entregas de hoy
