@@ -379,6 +379,11 @@ function crearFilaPedido(pedido) {
             </td>
             <td class="col-acciones">
                 <div class="table-actions">
+                    ${pedido.analisis_historial ? `
+                        <button class="btn-table-action btn-ver-analisis" data-pedido-id="${pedido.id}">
+                            🔍 Ver
+                        </button>
+                    ` : ''}
                     ${pedido.comprobante_url ? `
                         <button class="btn-table-action btn-ver-comprobante" data-url="${pedido.comprobante_url}">
                             📄 Ver
@@ -406,6 +411,13 @@ function agregarEventListenersTabla() {
             } else if (tipo === 'pedido') {
                 actualizarEstadoPedido(pedidoId, nuevoEstado);
             }
+        });
+    });
+
+    document.querySelectorAll('.btn-ver-analisis').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const pedidoId = e.currentTarget.dataset.pedidoId;
+            abrirModalAnalisis(pedidoId);
         });
     });
 
@@ -460,6 +472,118 @@ function cerrarModalPedido() {
     elements.formPedido.reset();
     appState.editandoPedido = null;
 }
+
+function abrirModalAnalisis(pedidoId) {
+    const pedido = appState.pedidos.find(p => p.id === pedidoId);
+    if (!pedido || !pedido.analisis_historial) {
+        showToast('No hay análisis disponible para este pedido', 'warning');
+        return;
+    }
+
+    const analisis = pedido.analisis_historial;
+
+    // Crear modal dinámicamente
+    const modalHTML = `
+        <div class="modal active" id="modal-analisis">
+            <div class="modal-overlay"></div>
+            <div class="modal-content modal-analisis-content">
+                <button class="modal-close" id="close-analisis">✕</button>
+                <h2 class="modal-title">📊 Análisis de Conversación</h2>
+                <div class="modal-body">
+                    <div class="analisis-header">
+                        <div class="analisis-cliente">
+                            <strong>${pedido.cliente_nombre}</strong>
+                            <span class="analisis-meta">DNI: ${pedido.cliente_dni} | Tel: ${pedido.cliente_telefono}</span>
+                        </div>
+                        <div class="analisis-tono">
+                            <span class="badge-tono">${analisis.tono_conversacion || 'N/A'}</span>
+                        </div>
+                    </div>
+
+                    <div class="analisis-section">
+                        <h3>💬 Resumen de la Conversación</h3>
+                        <p class="analisis-resumen">${analisis.resumen || 'No disponible'}</p>
+                    </div>
+
+                    ${analisis.promociones_detalle && analisis.promociones_detalle.length > 0 ? `
+                        <div class="analisis-section">
+                            <h3>🛒 Promociones Solicitadas</h3>
+                            <div class="promociones-lista">
+                                ${analisis.promociones_detalle.map(promo => `
+                                    <div class="promo-item">
+                                        <div class="promo-nombre">
+                                            <span class="promo-cantidad">${promo.cantidad}x</span>
+                                            ${promo.nombre}
+                                        </div>
+                                        ${promo.observaciones ? `
+                                            <div class="promo-obs">${promo.observaciones}</div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${analisis.intenciones_cliente && analisis.intenciones_cliente.length > 0 ? `
+                        <div class="analisis-section">
+                            <h3>🎯 Intenciones del Cliente</h3>
+                            <ul class="analisis-lista">
+                                ${analisis.intenciones_cliente.map(intencion => `
+                                    <li>${intencion}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+
+                    ${analisis.puntos_clave && analisis.puntos_clave.length > 0 ? `
+                        <div class="analisis-section">
+                            <h3>⭐ Puntos Clave</h3>
+                            <ul class="analisis-lista puntos-clave">
+                                ${analisis.puntos_clave.map(punto => `
+                                    <li>${punto}</li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+
+                    ${pedido.historial_conversacion ? `
+                        <div class="analisis-section">
+                            <h3>📝 Historial Completo</h3>
+                            <div class="historial-conversacion">
+                                ${pedido.historial_conversacion.split('\n').map(linea => {
+        if (linea.startsWith('Cliente:')) {
+            return `<div class="mensaje-cliente">${linea}</div>`;
+        } else if (linea.startsWith('Agente:')) {
+            return `<div class="mensaje-agente">${linea}</div>`;
+        } else {
+            return `<div class="mensaje-sistema">${linea}</div>`;
+        }
+    }).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Agregar modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Agregar event listeners
+    const modal = document.getElementById('modal-analisis');
+    const closeBtn = document.getElementById('close-analisis');
+    const overlay = modal.querySelector('.modal-overlay');
+
+    const cerrarModal = () => {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    };
+
+    closeBtn.addEventListener('click', cerrarModal);
+    overlay.addEventListener('click', cerrarModal);
+}
+
 
 function exportarExcel() {
     try {

@@ -65,6 +65,10 @@ serve(async (req) => {
 
         console.log('🤖 Datos extraídos por OpenAI:', JSON.stringify(datosExtraidos, null, 2));
 
+        // Generar análisis del historial con OpenAI
+        const analisisHistorial = await generarAnalisisHistorial(historialTexto, datosExtraidos);
+        console.log('📊 Análisis del historial generado:', JSON.stringify(analisisHistorial, null, 2));
+
         // Validar datos extraídos
         if (!datosExtraidos.cliente_nombre || !datosExtraidos.promo_seleccionada) {
             return new Response(
@@ -108,7 +112,9 @@ serve(async (req) => {
                 comprobante_url: comprobanteUrl, // URL de la imagen del comprobante
                 estado_pago: estadoPago,
                 estado_pedido: 'nuevo',
-                notas_internas: 'Pedido creado automáticamente desde WhatsApp con OpenAI'
+                notas_internas: 'Pedido creado automáticamente desde WhatsApp con OpenAI',
+                historial_conversacion: historialTexto, // Guardar historial completo
+                analisis_historial: analisisHistorial // Guardar análisis generado por OpenAI
             }])
             .select();
 
@@ -263,6 +269,95 @@ ${historial}`;
     console.log('🤖 Respuesta de OpenAI:', contenido);
 
     // Parsear JSON (puede venir con o sin markdown)
+    let jsonTexto = contenido;
+    if (contenido.includes('```json')) {
+        jsonTexto = contenido.split('```json')[1].split('```')[0].trim();
+    } else if (contenido.includes('```')) {
+        jsonTexto = contenido.split('```')[1].split('```')[0].trim();
+    }
+
+    return JSON.parse(jsonTexto);
+}
+
+async function generarAnalisisHistorial(historial: string, datosExtraidos: any) {
+    const prompt = `Analiza la siguiente conversación de WhatsApp entre un cliente y un agente de ventas de Grupo Brico.
+
+Tu tarea es generar un análisis estructurado que ayude al equipo a entender rápidamente:
+1. De qué se habló en la conversación
+2. Qué promociones pidió el cliente (con cantidades exactas)
+3. Cualquier detalle importante o solicitud especial
+
+IMPORTANTE: Si el cliente pidió MÚLTIPLES promociones o VARIAS UNIDADES de la misma promoción, debes identificarlo claramente.
+
+Datos extraídos del pedido:
+- Cliente: ${datosExtraidos.cliente_nombre}
+- Promoción registrada: ${datosExtraidos.promo_seleccionada}
+- Monto: $${datosExtraidos.monto}
+
+Historial de conversación:
+${historial}
+
+Devuelve SOLO un objeto JSON válido (sin markdown) con esta estructura:
+{
+  "resumen": "Resumen breve de la conversación en 2-3 oraciones",
+  "promociones_detalle": [
+    {
+      "nombre": "Nombre completo de la promoción",
+      "cantidad": 1,
+      "observaciones": "Cualquier detalle especial (ej: 'Paleta Azul', 'Sin cebolla', etc.)"
+    }
+  ],
+  "intenciones_cliente": ["Lista de intenciones o necesidades expresadas por el cliente"],
+  "puntos_clave": ["Puntos importantes a recordar sobre este pedido"],
+  "tono_conversacion": "amigable/formal/urgente/etc"
+}`;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: 'gpt-4o-mini',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Eres un asistente experto en analizar conversaciones de ventas. Respondes SOLO con JSON válido, sin markdown ni texto adicional.'
+                },
+                {
+                    role: 'user',
+                    content: prompt
+                }
+            ],
+            temperature: 0.3,
+            max_tokens: 800
+        })
+    });
+
+    if (!response.ok) {
+        const error = await response.text();
+        console.error('❌ Error de OpenAI al generar análisis:', error);
+        // Retornar análisis básico si falla
+        return {
+            resumen: "No se pudo generar análisis automático",
+            promociones_detalle: [{
+                nombre: datosExtraidos.promo_seleccionada,
+                cantidad: 1,
+                observaciones: ""
+            }],
+            intenciones_cliente: [],
+            puntos_clave: [],
+            tono_conversacion: "desconocido"
+        };
+    }
+
+    const data = await response.json();
+    const contenido = data.choices[0].message.content.trim();
+
+    console.log('🤖 Análisis generado por OpenAI:', contenido);
+
+    // Parsear JSON
     let jsonTexto = contenido;
     if (contenido.includes('```json')) {
         jsonTexto = contenido.split('```json')[1].split('```')[0].trim();

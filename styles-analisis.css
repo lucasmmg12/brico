@@ -1,0 +1,244 @@
+/* ============================================
+   ESTILOS PARA MODAL DE ANÁLISIS DE HISTORIAL
+   ============================================ */
+
+.modal-analisis-content {
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.analisis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.analisis-cliente strong {
+    display: block;
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+}
+
+.analisis-meta {
+    font-size: 0.875rem;
+    opacity: 0.9;
+}
+
+.badge-tono {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    backdrop-filter: blur(10px);
+}
+
+.analisis-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.analisis-section:last-child {
+    border-bottom: none;
+}
+
+.analisis-section h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.analisis-resumen {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #374151;
+    background: #f9fafb;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.promociones-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.promo-item {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    transition: all 0.2s ease;
+}
+
+.promo-item:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+}
+
+.promo-nombre {
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.promo-cantidad {
+    background: #667eea;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    font-weight: 700;
+}
+
+.promo-obs {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-style: italic;
+    padding-left: 2.5rem;
+}
+
+.analisis-lista {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.analisis-lista li {
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #f9fafb;
+    border-radius: 6px;
+    border-left: 3px solid #10b981;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.analisis-lista.puntos-clave li {
+    border-left-color: #f59e0b;
+    background: #fffbeb;
+}
+
+.historial-conversacion {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.875rem;
+}
+
+.mensaje-cliente,
+.mensaje-agente,
+.mensaje-sistema {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+.mensaje-cliente {
+    background: #dbeafe;
+    border-left: 3px solid #3b82f6;
+    color: #1e40af;
+}
+
+.mensaje-agente {
+    background: #d1fae5;
+    border-left: 3px solid #10b981;
+    color: #065f46;
+}
+
+.mensaje-sistema {
+    background: #f3f4f6;
+    border-left: 3px solid #9ca3af;
+    color: #4b5563;
+}
+
+/* Scrollbar personalizado para el historial */
+.historial-conversacion::-webkit-scrollbar {
+    width: 8px;
+}
+
+.historial-conversacion::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.historial-conversacion::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.historial-conversacion::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-analisis-content {
+        max-width: 95%;
+        margin: 1rem;
+    }
+
+    .analisis-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .promo-nombre {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Animación de entrada */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.analisis-section {
+    animation: slideInUp 0.3s ease forwards;
+}
+
+.analisis-section:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.analisis-section:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.analisis-section:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.analisis-section:nth-child(5) {
+    animation-delay: 0.4s;
+}
