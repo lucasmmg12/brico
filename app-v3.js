@@ -51,6 +51,8 @@ const elements = {
     inputPromo: document.getElementById('input-promo'),
     inputMonto: document.getElementById('input-monto'),
     inputFechaEntrega: document.getElementById('input-fecha-entrega'),
+    inputTurnoFecha: document.getElementById('input-turno-fecha'),
+    inputTurnoHora: document.getElementById('input-turno-hora'),
     inputComprobante: document.getElementById('input-comprobante'),
     inputNotas: document.getElementById('input-notas'),
     btnCancelar: document.getElementById('btn-cancelar'),
@@ -214,6 +216,8 @@ async function guardarPedido(e) {
         estado_pago: estadoPago,
         estado_pedido: 'nuevo',
         fecha_entrega: elements.inputFechaEntrega.value || null,
+        turno_fecha: elements.inputTurnoFecha.value || null,
+        turno_hora: elements.inputTurnoHora.value || null,
         notas_internas: elements.inputNotas.value.trim() || null
     };
 
@@ -495,6 +499,7 @@ function abrirModalNuevoPedido() {
     elements.formPedido.reset();
     elements.inputUnidad.value = appState.unidadActual;
     elements.inputFechaEntrega.value = getToday();
+    elements.inputTurnoFecha.value = getToday();
     elements.modalPedido.classList.add('active');
 }
 
