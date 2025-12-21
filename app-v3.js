@@ -170,6 +170,27 @@ async function actualizarEstadoPedido(pedidoId, nuevoEstado) {
     }
 }
 
+async function eliminarPedido(pedidoId) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este pedido? Esta acción no se puede deshacer.')) {
+        return;
+    }
+
+    try {
+        const { error } = await supabaseClient
+            .from('pedidos')
+            .delete()
+            .eq('id', pedidoId);
+
+        if (error) throw error;
+
+        showToast('Pedido eliminado correctamente', 'success');
+        cargarPedidos();
+    } catch (error) {
+        console.error('❌ Error al eliminar pedido:', error);
+        showToast('Error al eliminar el pedido', 'error');
+    }
+}
+
 function marcarPedidoListo(pedidoId) {
     actualizarEstadoPedido(pedidoId, 'armado');
 }
@@ -393,6 +414,9 @@ function crearFilaPedido(pedido) {
                         ${pedido.estado_pedido === 'armado' ? 'disabled' : ''}>
                         ✅ Listo
                     </button>
+                    <button class="btn-table-action btn-eliminar-pedido" data-id="${pedido.id}" title="Eliminar pedido" style="color: #dc3545; border-color: #dc3545;">
+                        🗑️
+                    </button>
                 </div>
             </td>
         </tr>
@@ -432,6 +456,13 @@ function agregarEventListenersTabla() {
         btn.addEventListener('click', (e) => {
             const pedidoId = e.currentTarget.dataset.id;
             marcarPedidoListo(pedidoId);
+        });
+    });
+
+    document.querySelectorAll('.btn-eliminar-pedido').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const pedidoId = e.currentTarget.dataset.id;
+            eliminarPedido(pedidoId);
         });
     });
 }
